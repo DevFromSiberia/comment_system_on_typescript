@@ -2,10 +2,10 @@
 ## Run the commands to start the application:
 ### Clone a repository:
 
-    git clone
+    git clone https://github.com/DevFromSiberia/comment_system_on_typescript.git
 ***
 ### Installing dependencies:
-
+    cd comment_system_on_typescript
     npm install
 ***
 ### Compiling typescript:
@@ -13,7 +13,7 @@
     tsc
 ***
 
-\* After compilation run the file index.html in browser.
+\* After compilation run the file `src/index.html` in browser.
 
 
 
