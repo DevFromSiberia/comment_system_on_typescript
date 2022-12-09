@@ -1,1 +1,4 @@
-console.log('hello world')
+const commentSystem = new CommentSystem()
+commentSystem.render()
+
+
