@@ -8,7 +8,7 @@ if(textarea !== null) {
 function autosize(){
     setTimeout(function(){
         if(textarea !== null) {
-            textarea.style.cssText = 'height: 21px; padding: 0;';
+            textarea.style.cssText = 'height: 16px; padding-bottom: 5px;';
             textarea.style.cssText = 'height:' + textarea.scrollHeight + 'px';
         }
     },0)

@@ -117,6 +117,9 @@ li {
     color: #000000;
 
     border-bottom: 3px solid #000000;
+
+    
+    margin-right: 20px;
 }
 
 .commentSystem__count {
@@ -280,7 +283,7 @@ li {
 .userBlock__textarea {
     display: block;
     resize: none;
-    min-width: 648px;
+    min-width: 69%;
     height: 21px;
 
     background: #FFFFFF;
@@ -332,6 +335,8 @@ li {
 
     transition: background-color ease-in-out 0.2s;
     max-height: 61px;
+
+    padding: 15px 0;
 }
 
 .userBlock__btn:hover {
@@ -524,5 +529,195 @@ li {
     font-size: 18px;
 }
 
+/* Media */
 
+@media (max-width: 1200px) {
+    .userBlock__form {
+        flex-wrap: wrap;
+    }
 
+    .userBlock__textarea {
+        width: 100%;
+    }
+        
+    .userBlock__btn {
+        margin-left: 0;
+        margin-top: 18px;
+    }
+}
+
+@media (max-width: 960px) {
+    .main {
+        padding-left: 270px;
+    }
+}
+
+@media (max-width: 916px) {
+    .commentSystem__header {
+        flex-wrap: wrap;
+        
+    }  
+
+    .commentSystem__title {
+        margin-bottom: 28px;
+    }
+
+    .aside {
+        display: none;
+    }
+    
+    .main {
+        padding: 0;
+        margin: 0 20px;
+    }
+
+}
+
+@media (max-width: 620px) { 
+    .commentSystem__title {
+        margin-right: 40px;
+    }
+}
+
+@media (max-width: 605px) {
+    .commentBlock__title {
+        flex-wrap: wrap;
+    }
+
+    .commentBlock__nickname {
+        margin-right: 30px;
+    }
+
+    .commentBlock__prenickname {
+        order: 3;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 550px) {
+    .btnBlock__rate {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .minus,
+    .plus {
+        margin: 0;
+    }
+
+    .minus {
+        order: 3;
+        margin-top: 5px;
+    }
+
+    .plus {
+        order: 1;
+        margin-bottom: 5px;
+    }
+
+    .likeCounter {
+        order: 2;
+    }
+    
+}
+
+@media (max-width: 500px) {
+    .commentSystem__userBlock {
+        display: block;
+        position: relative;
+    }
+
+    .userBlock__content {
+        margin: 0;
+    }
+
+    .userBlock__nickname {
+        font-size: 18px;
+        margin-bottom: 6px;
+    }
+
+    .userBlock__title {
+        position: absolute;
+        top: 18px;
+        left: 80px;
+        right: 0;
+
+        flex-direction: column;
+
+        margin-bottom: 0;
+        
+    }
+
+    .userBlock__maxChar {
+        align-self: flex-end;
+        font-size: 12px;
+    }
+
+    .userBlock__form {
+        margin-top: 11px;
+    }
+
+    .userBlock__textarea::placeholder {
+        font-size: 14px;
+    }
+
+    .commentBlock__comment {
+        display: block;
+        position: relative;
+    }
+
+    .commentBlock__content {
+        margin-left: 0;
+    }
+
+    .commentBlock__reply {
+        display: block;
+        margin: 0;
+        position: relative;
+    }
+
+    .commentBlock__title {
+        position: absolute;
+        top: 18px;
+        left: 80px;
+        right: 0;
+    }
+    .commentBlock__content {
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .main {
+        margin: 0 5px;
+    }
+
+    .filter__dropdown {
+        margin-right: 5px;
+        min-width: 185px;
+    }
+
+    .filter__selected {
+        font-size: 14px;
+    }
+
+    .filter__favorites {
+        font-size: 14px;
+    }
+
+    .commentBlock__btnReply,
+    .commentBlock__btnLike {
+        font-size: 16px;
+        margin-right: 10px;
+        padding: 0;
+    }
+
+    .commentBlock__text {
+        margin-top: 20px;
+    }
+
+    .commentBlock__prenickname {
+        margin-top: 5px;
+    }
+}
