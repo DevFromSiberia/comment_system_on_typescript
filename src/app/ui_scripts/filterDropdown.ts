@@ -25,9 +25,15 @@ const filterItems: NodeListOf<Element> | null = filterList !== null
 if(filterSelected !== null) filterSelected.addEventListener('click', dropdown)
 
 function dropdown() {
-    if(filterList !== null) filterList.style.display = 'block'
-    if(filterSelectedSVG !== null) filterSelectedSVG.style.rotate = '180deg'
-
+    if(filterList !== null) {
+        if(filterList.style.display === 'block') {
+            filterList.style.display = 'none'
+            if(filterSelectedSVG !== null) filterSelectedSVG.style.rotate = '0deg'
+        } else {
+            filterList.style.display = 'block'
+            if(filterSelectedSVG !== null) filterSelectedSVG.style.rotate = '180deg'
+        }
+    } 
     if(filterItems !== null) filterItems.forEach(chooseItem)
 }
 
