@@ -1,15 +1,17 @@
 /* Script for autosize user's textarea */
-
 const textarea: HTMLElement | null = document.querySelector('.userBlock__textarea')
-if(textarea !== null) {
-    textarea.addEventListener('keydown', autosize)
-}  
-
-function autosize(){
-    setTimeout(function(){
-        if(textarea !== null) {
-            textarea.style.cssText = 'height: 16px; padding-bottom: 5px;';
-            textarea.style.cssText = 'height:' + textarea.scrollHeight + 'px';
-        }
-    },0)
+    const paddingBottomPlusTop = 40
+    if(textarea !== null) {
+    
+    textarea.setAttribute("style", "height:" + (textarea.scrollHeight - paddingBottomPlusTop) + "px;overflow-y:hidden;");
+    textarea.addEventListener("input", OnInput, false);
 }
+
+function OnInput() {
+    if(textarea !== null) {
+        textarea.style.height = '0px';
+        textarea.style.height = (textarea.scrollHeight - paddingBottomPlusTop) + "px";
+    }
+}
+
+
