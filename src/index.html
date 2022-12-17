@@ -78,8 +78,8 @@
                         <p class="userBlock__maxChar">Макс. <span>1000</span> символов</p>
                     </div>
                     <form class="userBlock__form">
-                        <textarea class="userBlock__textarea" type="text" placeholder="Введите текст сообщения..." cols="1" rows="1"></textarea>
-                        <button class="userBlock__btn" type="submit">Отправить</button>
+                        <textarea class="userBlock__textarea" type="text" placeholder="Введите текст сообщения..." cols="1" rows="1" maxlength="1000"></textarea>
+                        <button class="userBlock__btn" type="button">Отправить</button>
                         <p class="userBlock__maxCharWarning">Слишком длинное сообщение</p>  
                     </form>
                 </div>
@@ -158,9 +158,8 @@
         </div><!--comment system comments-->
     </main>
 
-    <script src="../dist/ui_scripts/filterDropdown.js"></script>
-    <script src="../dist/ui_scripts/autosizeForTextArea.js"></script>
-
+    <script src="../dist/modules/filterDropdown.js"></script>
+    <script src="../dist/modules/commentField.js"></script>
     <script src="../dist/modules/CommentSystem.js"></script>
     <script src="../dist/modules/User.js"></script>
     <script src="../dist/index.js"></script>

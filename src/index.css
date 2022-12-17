@@ -568,7 +568,7 @@ li {
 
     .userBlock__maxCharWarning {
         position: absolute;
-        top: 110%;
+        top: calc(100% + 10px);
         right: calc(50% - 178px / 2);
     
         font-size: 12px;
