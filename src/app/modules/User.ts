@@ -1,12 +1,16 @@
 class User extends CommentSystem {
-    nickname: string
-    ava: string
+    private nickname: string
+    private ava: string
+    private form: UserForm
     constructor(nickname: string, ava: string) {
         super()
         this.nickname = nickname
         this.ava = ava
-    }
 
+        this.form = new UserForm()
+        this.form.listenerTextArea()
+    }
+    
     comment() {
         
     }

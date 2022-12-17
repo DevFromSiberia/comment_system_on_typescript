@@ -4,8 +4,11 @@ class User extends CommentSystem {
         super();
         this.nickname = nickname;
         this.ava = ava;
+        this.form = new UserForm();
+        this.form.listenerTextArea();
     }
     comment() {
+        console.log(this.form);
     }
     reply() {
     }

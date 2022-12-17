@@ -3,19 +3,13 @@ class CommentSystem {
     constructor() {
         this.DATA = ""; // some data in localStorage
     }
-    getData() {
-        const LSdata = localStorage.getItem('DATA');
-        if (LSdata) {
-            this.DATA = LSdata;
-        }
-    }
-    createUser() {
-    }
     redraw(data) {
     }
+    createUser(nickname, ava) {
+        const user = new User(nickname, ava);
+        return user;
+    }
     render() {
-        this.createUser();
-        this.getData();
         this.redraw(this.DATA);
     }
 }
