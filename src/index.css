@@ -255,6 +255,7 @@ li {
     justify-content: space-between;
     max-width: 688px;
     margin-bottom: 20px;
+    margin-right: 27%;
 }
 
 .userBlock__nickname {
@@ -278,6 +279,8 @@ li {
 .userBlock__form {
     display: flex;
     justify-content: space-between;
+
+    position: relative;
 }
 
 .userBlock__textarea {
@@ -312,8 +315,6 @@ li {
 
     color: #000000;
     opacity: 0.4;
-
-
 }
 
 .userBlock__btn {
@@ -351,6 +352,23 @@ li {
 .--disable:hover {
     cursor: auto;
     background-color: #A1A1A1;
+}
+
+.userBlock__maxCharWarning {
+    position: absolute;
+    top: -40px;
+    right: 0;
+
+
+    max-width:23%;
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Inter';
+    font-weight: 400;
+
+    color: #FF0000;
+
+    display: none;
 }
 
 /*COMMENT BLOCK*/
@@ -542,6 +560,20 @@ li {
     .userBlock__btn {
         margin-left: 0;
         margin-top: 18px;
+    }
+
+    .userBlock__title {
+        margin-right: 0;
+    }
+
+    .userBlock__maxCharWarning {
+        position: absolute;
+        top: 110%;
+        right: calc(50% - 178px / 2);
+    
+        font-size: 12px;
+        max-width:100%;
+        
     }
 }
 
