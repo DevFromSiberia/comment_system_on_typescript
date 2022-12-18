@@ -1,5 +1,3 @@
 "use strict";
 const commentSystem = new CommentSystem();
-const user = commentSystem.createUser('Саня', "/f/f/f");
-user.comment();
-commentSystem.render();
+const user = new User('Вася Пупкин', '../src/assets/img/ava_2.png');

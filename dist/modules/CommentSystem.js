@@ -1,15 +1,8 @@
 "use strict";
 class CommentSystem {
-    constructor() {
-        this.DATA = ""; // some data in localStorage
+    createComment(commentsTxt) {
+        console.log(commentsTxt);
     }
-    redraw(data) {
-    }
-    createUser(nickname, ava) {
-        const user = new User(nickname, ava);
-        return user;
-    }
-    render() {
-        this.redraw(this.DATA);
+    render(data) {
     }
 }

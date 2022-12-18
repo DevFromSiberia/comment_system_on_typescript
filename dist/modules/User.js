@@ -4,11 +4,29 @@ class User extends CommentSystem {
         super();
         this.nickname = nickname;
         this.ava = ava;
-        this.form = new UserForm();
-        this.form.listenerTextArea();
+        this.textarea = new UserForm(); // получения текстового поля с кнопкой пользователя
+        this.createUser();
+        this.comment(); // разрешение пользователю комментировать
+    }
+    createUser() {
+        const userAva = document.querySelector('.ava');
+        const userNickname = document.querySelector('.userBlock__nickname');
+        if (userNickname !== null)
+            userNickname.innerHTML = this.nickname;
+        if (userAva !== null)
+            userAva.setAttribute('src', this.ava);
     }
     comment() {
-        console.log(this.form);
+        const sendBtnElement = document.querySelector('.userBlock__btn');
+        if (sendBtnElement !== null) {
+            sendBtnElement.addEventListener('click', () => {
+                if (!(sendBtnElement.classList.contains('--disable'))) {
+                    const text = this.textarea.getTextTextarea();
+                    super.createComment(text);
+                    this.textarea.clearText();
+                }
+            });
+        }
     }
     reply() {
     }
