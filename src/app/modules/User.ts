@@ -2,6 +2,9 @@ class User extends CommentSystem { // класс пользователя
     private textarea: UserForm
     private nickname: string
     private ava: string
+    private commentID: number
+    private sendBtnElement: HTMLElement | null
+    private sendBtnListener: EventListener
 
     constructor(nickname: string, ava: string) {
         super()
@@ -11,6 +14,13 @@ class User extends CommentSystem { // класс пользователя
         
         this.textarea = new UserForm() // получения текстового поля с кнопкой пользователя
         
+        this.commentID = 0
+
+        this.sendBtnListener = () => {}
+        this.sendBtnElement = document.querySelector('.userBlock__btn')
+
+        
+
         this.createUser() // метод создания пользователя
 
         this.comment() // разрешение пользователю комментировать
@@ -23,29 +33,63 @@ class User extends CommentSystem { // класс пользователя
         if(userAva !== null) userAva.setAttribute('src', this.ava)
     }
 
-    private comment() { // метод обработки и отправки комментария на создание
-        const sendBtnElement: HTMLElement | null = document.querySelector('.userBlock__btn')
-        if(sendBtnElement !== null) {
-                sendBtnElement.addEventListener('click', () => { // при клике на кнопку "отправить"
-                if(!(sendBtnElement.classList.contains('--disable'))) { // проверяется доступность кнопки
-                    const text = this.textarea.getTextTextarea() // получение текста из текстового поля
-                    const date = new Date()
-                    const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}` // получение даты
+    private comment() {// метод обработки и отправки комментария на создание
+        if(this.sendBtnElement) this.sendBtnElement.removeEventListener('click', this.sendBtnListener)
+        this.textarea.changePlaceholderTexarea('Введите текст сообщения...')
+        this.textarea.changeSendBtnText('Отправить') 
+
+        this.sendBtnListener = () => {
+            if(this.sendBtnElement && !(this.sendBtnElement.classList.contains('--disable'))) { // проверяется доступность кнопки
+                const text = this.textarea.getTextTextarea() // получение текста из текстового поля
+                const date = new Date()
+                const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}` // вывод даты
                 
-                    super.createComment(this.nickname, this.ava, text, currentDate) // создается комментарий от текущего пользователя
-                    this.textarea.clearText() // очищается поле
-                }
-            })
-        }      
+                super.createCommentBlock(this.commentID, this.nickname, this.ava, text, currentDate) // создается комментарий от текущего пользователя
+                
+                this.reply(this.commentID) // добавляется возможность ответить на кокретный комментарий
+                this.commentID++
+                this.textarea.clearTextarea() // очищается поле
+            }   
+        }
+        if(this.sendBtnElement) this.sendBtnElement.addEventListener('click', this.sendBtnListener)
     }
 
-    private reply() {
-        const replyBtnList: NodeListOf<Element> = document.querySelectorAll('.commentBlock__btnReply')
-        replyBtnList.forEach(btnItem => {
-            btnItem.addEventListener('click', () => {
-                this.textarea.focusTexarea()
+    private reply(id: number) {
+        const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
+        const commentBlock = comments !== null ? comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
+        
+        if(commentBlock && comments) {
+            const prenicknameElement: HTMLElement | null = commentBlock.querySelector('.commentBlock__nickname')
+            const replyBtn: HTMLElement | null = commentBlock.querySelector('.commentBlock__btnReply')
+            comments.addEventListener('click', (event) => {
+                if(event.target === replyBtn) {
+                    this.textarea.focusTexarea()
+                    this.textarea.changePlaceholderTexarea('Введите ваш ответ пользователю')
+                    this.textarea.changeSendBtnText('Ответить')
+
+                    if(this.sendBtnElement) this.sendBtnElement.removeEventListener('click', this.sendBtnListener)
+                    
+                    this.sendBtnListener = () => {
+                        if(this.sendBtnElement && !(this.sendBtnElement.classList.contains('--disable'))) {
+                            const text = this.textarea.getTextTextarea() // получение текста из текстового поля
+                            const date = new Date()
+                            const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}`
+
+                            if(prenicknameElement) {
+                                const prenickname: string = prenicknameElement.innerHTML
+                                super.createReply(id, this.nickname, prenickname, this.ava, text, currentDate)
+                                this.textarea.clearTextarea()
+                            }
+                        }
+                    }
+                    
+                    if(this.sendBtnElement) this.sendBtnElement.addEventListener('click', this.sendBtnListener)
+                }
+                else {
+                    this.comment()
+                }
             })
-        })
+        }        
     }
 
     like() {

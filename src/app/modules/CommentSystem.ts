@@ -1,21 +1,16 @@
 class CommentSystem {
-    private comments: HTMLElement | null
-    private commentID: number
-    constructor() {
-        this.comments = document.querySelector('.commentSystem__comments')
-        this.commentID = 0
-    }
+    
 
-    public createComment(userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
-        this.commentID++
+    public createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
+        const commentID:number = id
         const commentNickname: string = userNickname
         const commentAvaPath: string = userAva
         const commentTime: string = currentDate
         const commentText: string = commentsTxt 
 
         const commentHTMLTemplate = 
-        `<div class="commentSystem__commentBlock">
-            <div class="commentBlock__comment" id=${this.commentID}>
+        `<div class="commentSystem__commentBlock" data-id=${commentID}>
+            <div class="commentBlock__comment">
                 <div class="commentBlock__ava">
                     <img  src="${commentAvaPath}" alt="avatar">
                 </div>
@@ -28,7 +23,7 @@ class CommentSystem {
                         ${commentText}
                     </p>
                     <div class="commentBlock__btnBlock">
-                        <button class="commentBlock__btnReply" id=${this.commentID}>
+                        <button class="commentBlock__btnReply">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.55556 7.8V3L1 11.4L9.55556 19.8V14.88C15.6667 14.88 19.9444 16.8 23 21C21.7778 15 18.1111 9 9.55556 7.8Z" fill="black" fill-opacity="0.4"/>
                             </svg>
@@ -49,27 +44,39 @@ class CommentSystem {
             </div>
         </div>
         `
-        this.render(commentHTMLTemplate)
+
+        const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
+        this.render(comments, commentHTMLTemplate, "afterbegin")       
     }
 
-    public createReply(userNickname: string, userAva: string, commentsTxt:string, currentDate: string) {
+    public createReply(id:number, userNickname: string, PreNickname: string, userAva: string, commentsTxt:string, currentDate: string) {
+
+        const replyID: number = id
+
+        const replyNickname: string = userNickname
+        const replyPreNickname: string = PreNickname
+        const replyAvaPath: string = userAva
+        const replyTime: string = currentDate
+        const replyText: string = commentsTxt 
+
+
         const replyHTMLTemplate = `
         <div class="commentBlock__reply">
             <div class="commentBlock__ava">
-                <img  src="./assets/img/ava.png" alt="">
+                <img  src="${replyAvaPath}" alt="">
             </div>
             <div class="commentBlock__content">
                 <div class="commentBlock__title">
-                    <h3 class="commentBlock__nickname">Вася Пупкин</h3>
+                    <h3 class="commentBlock__nickname">${replyNickname}</h3>
                     <h3 class="commentBlock__prenickname">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.55556 7.8V3L1 11.4L9.55556 19.8V14.88C15.6667 14.88 19.9444 16.8 23 21C21.7778 15 18.1111 9 9.55556 7.8Z" fill="black" fill-opacity="0.4"/>
-                        </svg>Вася Пупкин
+                        </svg>${replyPreNickname}
                     </h3>
-                    <time class="commentBlock__time" datetime="2022-15-01T13:55">15.01 13:55</time>
+                    <time class="commentBlock__time">${replyTime}</time>
                 </div>
                 <p class="commentBlock__text">
-                    Самое обидное когда сценарий по сути есть - в виде книг, где нет сюжетных дыр, всё логично, стройное повествование и достаточно взять и экранизировать оригинал как это было в первых фильмах с минимальным количеством отсебятины и зритель с восторгом примет любой такой фильм и сериал, однако вместо этого 'Кольца власти' просто позаимствовали имена из оригинала, куски истории, мало связанные между собой и выдали очередной среднячковый сериал на один раз в лучшем случае.
+                    ${replyText}
                 </p>
                 <div class="commentBlock__btnBlock">
                     <button class="commentBlock__btnLike">
@@ -86,9 +93,12 @@ class CommentSystem {
                 </div>
             </div>
         </div>`
+
+        const commentBlock: HTMLElement | null = document.querySelector(`.commentSystem__commentBlock[data-id="${replyID}"`)
+        this.render(commentBlock, replyHTMLTemplate, "afterend")
     }
 
-    private render(html: string) { 
-        if(this.comments) this.comments.insertAdjacentHTML("afterbegin" , html)
+    private render(element: HTMLElement | null, html: string, wayToAdd: InsertPosition) {
+       if(element) element.insertAdjacentHTML(wayToAdd , html)
     }
 }

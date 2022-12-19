@@ -65,14 +65,24 @@ class UserForm { // класс текстового поля с кнопкой �
         return text
     }
 
-    public clearText() { // метод очистки текстового поля текстового поля
+    public clearTextarea() { // метод очистки текстового поля текстового поля
         const textareaElement: HTMLInputElement | null = document.querySelector('.userBlock__textarea')
         const maxCharElement: HTMLInputElement | null = document.querySelector('.userBlock__maxChar')
         if(textareaElement) textareaElement.value = ""
         if(maxCharElement) maxCharElement.innerHTML = `Макс. ${this.maxChar} символов`
+        if(this.sendBtn) this.sendBtn.classList.add('--disable')
     }
 
     public focusTexarea() {
         if(this.textarea) this.textarea.focus()
+    }
+
+    public changePlaceholderTexarea(str: string) {
+        if(this.textarea) this.textarea.placeholder = str
+        
+    }
+
+    public changeSendBtnText(str: string) {
+        if(this.sendBtn) this.sendBtn.innerHTML = str
     }
 }
