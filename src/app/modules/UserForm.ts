@@ -67,6 +67,12 @@ class UserForm { // класс текстового поля с кнопкой �
 
     public clearText() { // метод очистки текстового поля текстового поля
         const textareaElement: HTMLInputElement | null = document.querySelector('.userBlock__textarea')
+        const maxCharElement: HTMLInputElement | null = document.querySelector('.userBlock__maxChar')
         if(textareaElement) textareaElement.value = ""
+        if(maxCharElement) maxCharElement.innerHTML = `Макс. ${this.maxChar} символов`
+    }
+
+    public focusTexarea() {
+        if(this.textarea) this.textarea.focus()
     }
 }

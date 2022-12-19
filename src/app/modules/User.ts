@@ -12,6 +12,7 @@ class User extends CommentSystem { // класс пользователя
         this.textarea = new UserForm() // получения текстового поля с кнопкой пользователя
         
         this.createUser() // метод создания пользователя
+
         this.comment() // разрешение пользователю комментировать
     }
 
@@ -28,19 +29,23 @@ class User extends CommentSystem { // класс пользователя
                 sendBtnElement.addEventListener('click', () => { // при клике на кнопку "отправить"
                 if(!(sendBtnElement.classList.contains('--disable'))) { // проверяется доступность кнопки
                     const text = this.textarea.getTextTextarea() // получение текста из текстового поля
-
                     const date = new Date()
                     const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}` // получение даты
                 
                     super.createComment(this.nickname, this.ava, text, currentDate) // создается комментарий от текущего пользователя
                     this.textarea.clearText() // очищается поле
-                } 
+                }
             })
         }      
     }
 
-    reply() {
-
+    private reply() {
+        const replyBtnList: NodeListOf<Element> = document.querySelectorAll('.commentBlock__btnReply')
+        replyBtnList.forEach(btnItem => {
+            btnItem.addEventListener('click', () => {
+                this.textarea.focusTexarea()
+            })
+        })
     }
 
     like() {
