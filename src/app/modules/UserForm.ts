@@ -9,7 +9,7 @@ class UserForm { // класс текстового поля с кнопкой �
 
     constructor() {
         this.textarea = document.querySelector('.userBlock__textarea') // получение элемента текстового поля
-        this.charWarning = document.querySelector('.userBlock__maxCharWarning') // получение элемента предупрежнеия о превышении символов
+        this.charWarning = document.querySelector('.userBlock__maxCharWarning') // получение элемента предупрежния о превышении символов
         this.sendBtn = document.querySelector('.userBlock__btn') // получение элемента кнопки отправить
 
         this.paddingBottomPlusTop = 40 // сумма верхнего и нижнего внутренних отступов в текстовом поле, нужна для корректного отображения текстового поля при изменении высоты
@@ -23,20 +23,27 @@ class UserForm { // класс текстового поля с кнопкой �
         }
 
         this.checkQuantityChar = (): void => { // коллбэк функция для проверки количества введенных символов
-            if(this.textarea !== null && this.sendBtn !== null && this.charWarning !== null) {
+            const maxCharElement = document.querySelector('.userBlock__maxChar')
+            if(this.textarea !== null && this.sendBtn !== null && this.charWarning !== null && maxCharElement !== null) {
                 const strTextarea: string = this.textarea.value
-                    if(+strTextarea.length === 0) {
-                        this.sendBtn.classList.add('--disable')
-                    } else if(+strTextarea.length > 0) {
-                        this.sendBtn.classList.remove('--disable')
-                    }
+                
 
-                    if(+strTextarea.length >= this.maxChar) {
-                        this.charWarning.style.display = 'block'
-                        this.sendBtn.classList.add('--disable')  
-                    } else if(+strTextarea.length < this.maxChar) {
-                        this.charWarning.style.display = 'none'
-                    }       
+                if(+strTextarea.length === 0) {
+                    this.sendBtn.classList.add('--disable')
+                    maxCharElement.innerHTML = `Макс. ${this.maxChar} символов`
+                } else if(+strTextarea.length > 0) {
+                    this.sendBtn.classList.remove('--disable')
+                    maxCharElement.innerHTML = `${+strTextarea.length}/${this.maxChar}`
+                }
+
+                if(+strTextarea.length >= this.maxChar) {
+                    this.charWarning.style.display = 'block'
+                    this.sendBtn.classList.add('--disable')  
+                } else if(+strTextarea.length < this.maxChar) {
+                    this.charWarning.style.display = 'none'
+                } 
+                    
+                    
             }
         }
 

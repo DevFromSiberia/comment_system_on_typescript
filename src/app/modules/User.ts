@@ -11,7 +11,7 @@ class User extends CommentSystem { // класс пользователя
         
         this.textarea = new UserForm() // получения текстового поля с кнопкой пользователя
         
-        this.createUser()
+        this.createUser() // метод создания пользователя
         this.comment() // разрешение пользователю комментировать
     }
 
