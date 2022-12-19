@@ -25,11 +25,15 @@ class User extends CommentSystem { // класс пользователя
     private comment() { // метод обработки и отправки комментария на создание
         const sendBtnElement: HTMLElement | null = document.querySelector('.userBlock__btn')
         if(sendBtnElement !== null) {
-                sendBtnElement.addEventListener('click', () => { 
-                if(!(sendBtnElement.classList.contains('--disable'))) {
-                    const text = this.textarea.getTextTextarea()
-                    super.createComment(text)
-                    this.textarea.clearText()
+                sendBtnElement.addEventListener('click', () => { // при клике на кнопку "отправить"
+                if(!(sendBtnElement.classList.contains('--disable'))) { // проверяется доступность кнопки
+                    const text = this.textarea.getTextTextarea() // получение текста из текстового поля
+
+                    const date = new Date()
+                    const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}` // получение даты
+                
+                    super.createComment(this.nickname, this.ava, text, currentDate) // создается комментарий от текущего пользователя
+                    this.textarea.clearText() // очищается поле
                 } 
             })
         }      
