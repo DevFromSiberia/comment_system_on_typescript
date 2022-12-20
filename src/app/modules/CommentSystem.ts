@@ -1,6 +1,6 @@
 class CommentSystem {
     private DATA: string | null
-
+    protected comments: HTMLElement | null
     constructor() {
         if(!localStorage.getItem('DATA')) {
             this.DATA = '{"history": {}}'
@@ -8,43 +8,78 @@ class CommentSystem {
         } else {
             this.DATA = localStorage.getItem('DATA')
         }
+        this.comments = document.querySelector('.commentSystem__comments')
     }
 
     public createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
-        const commentID: number = id
-        const commentNickname: string = userNickname
-        const commentAvaPath: string = userAva
-        const commentTime: string = currentDate
-        const commentText: string = commentsTxt 
-
         const currentData = this.getDATA()  
-        currentData.history[`commentBlock${commentID}`] = {
-            id: commentID,
+        currentData.history[`commentBlock${id}`] = {
+            id: id,
             comment: {
-                commentNickname: commentNickname,
-                commentAvaPath: commentAvaPath,
-                commentTime: commentTime,
-                commentText: commentText
+                commentNickname: userNickname,
+                commentAvaPath: userAva,
+                commentTime: currentDate,
+                commentText: commentsTxt
             },
             reply: {}
         }
         
         localStorage.setItem('DATA', JSON.stringify(currentData))
-        
 
-        const commentHTMLTemplate = 
-        `<div class="commentSystem__commentBlock" data-id=${commentID}>
+        const commentHTMLTemplate = this.createTemplateComment(id, userNickname, userAva, commentsTxt, currentDate)
+        this.render(this.comments, commentHTMLTemplate, "afterbegin")       
+    }
+
+    public getDATA(): any {
+        const currentData: string | null = localStorage.getItem('DATA')
+        if(currentData) {
+            const parseData = JSON.parse(currentData)
+            if(Object.keys(parseData).includes('history')) {
+                return parseData
+            }
+        }
+    }
+
+    public createReply(id:number, userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) {
+
+        const replyHTMLTemplate = this.createTemplateReply(userNickname, preNickname, userAva, replyTxt, date)
+
+        if(this.comments) {
+            const commentBlock: HTMLElement | null = this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`)
+            this.render(commentBlock, replyHTMLTemplate, "afterend")
+        }
+    }
+
+    protected updateComments() {
+        const currentData = this.getDATA()
+        let htmlTemplateComment: string;
+        let commentBlock: string | number
+        for(commentBlock in currentData.history) {
+            htmlTemplateComment = this.createTemplateComment(
+                currentData.history[commentBlock].id,
+                currentData.history[commentBlock].comment.commentNickname,
+                currentData.history[commentBlock].comment.commentAvaPath,
+                currentData.history[commentBlock].comment.commentText,
+                currentData.history[commentBlock].comment.commentTime
+            )
+            this.render(this.comments, htmlTemplateComment, "afterbegin")
+        }
+    }
+
+    private createTemplateComment(id:number, userNickname: string, userAva: string, commentsTxt:string, date: string) {
+        return `
+        <div class="commentSystem__commentBlock" data-id=${id}>
             <div class="commentBlock__comment">
                 <div class="commentBlock__ava">
-                    <img  src="${commentAvaPath}" alt="avatar">
+                    <img  src="${userAva}" alt="avatar">
                 </div>
                 <div class="commentBlock__content">
                     <div class="commentBlock__title">
-                        <h3 class="commentBlock__nickname">${commentNickname}</h3>
-                        <time class="commentBlock__time">${commentTime}</time>
+                        <h3 class="commentBlock__nickname">${userNickname}</h3>
+                        <time class="commentBlock__time">${date}</time>
                     </div>
                     <p class="commentBlock__text">
-                        ${commentText}
+                        ${commentsTxt}
                     </p>
                     <div class="commentBlock__btnBlock">
                         <button class="commentBlock__btnReply">
@@ -67,51 +102,27 @@ class CommentSystem {
                 </div>
             </div>
         </div>
-        `
-
-        const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
-        
-        this.render(comments, commentHTMLTemplate, "afterbegin")       
+    `
     }
 
-    public getDATA(): any {
-        const currentData: string | null = localStorage.getItem('DATA')
-        if(currentData) {
-            const parseData = JSON.parse(currentData)
-            if(Object.keys(parseData).includes('history')) {
-                return parseData
-            }
-        }
-    }
-
-    public createReply(id:number, userNickname: string, PreNickname: string, userAva: string, commentsTxt:string, currentDate: string) {
-
-        const commentID: number = id
-
-        const replyNickname: string = userNickname
-        const replyPreNickname: string = PreNickname
-        const replyAvaPath: string = userAva
-        const replyTime: string = currentDate
-        const replyText: string = commentsTxt 
-
-
-        const replyHTMLTemplate = `
+    private createTemplateReply(userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) {
+        return `
         <div class="commentBlock__reply">
             <div class="commentBlock__ava">
-                <img  src="${replyAvaPath}" alt="">
+                <img  src="${userAva}" alt="">
             </div>
             <div class="commentBlock__content">
                 <div class="commentBlock__title">
-                    <h3 class="commentBlock__nickname">${replyNickname}</h3>
+                    <h3 class="commentBlock__nickname">${userNickname}</h3>
                     <h3 class="commentBlock__prenickname">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.55556 7.8V3L1 11.4L9.55556 19.8V14.88C15.6667 14.88 19.9444 16.8 23 21C21.7778 15 18.1111 9 9.55556 7.8Z" fill="black" fill-opacity="0.4"/>
-                        </svg>${replyPreNickname}
+                        </svg>${preNickname}
                     </h3>
-                    <time class="commentBlock__time">${replyTime}</time>
+                    <time class="commentBlock__time">${date}</time>
                 </div>
                 <p class="commentBlock__text">
-                    ${replyText}
+                    ${replyTxt}
                 </p>
                 <div class="commentBlock__btnBlock">
                     <button class="commentBlock__btnLike">
@@ -128,9 +139,6 @@ class CommentSystem {
                 </div>
             </div>
         </div>`
-
-        const commentBlock: HTMLElement | null = document.querySelector(`.commentSystem__commentBlock[data-id="${commentID}"`)
-        this.render(commentBlock, replyHTMLTemplate, "afterend")
     }
 
     private render(element: HTMLElement | null, html: string, wayToAdd: InsertPosition) {

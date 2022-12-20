@@ -8,6 +8,7 @@ class User extends CommentSystem { // класс пользователя
 
     constructor(nickname: string, ava: string) {
         super()
+        this.updateComments()
         
         this.nickname = nickname
         this.ava = ava
@@ -40,8 +41,10 @@ class User extends CommentSystem { // класс пользователя
                 const preparedComment = this.prepareComment() // подготовка комментария
                 
                 super.createCommentBlock(this.commentID, this.nickname, this.ava, preparedComment.text, preparedComment.currentDate) // создается комментарий от текущего пользователя
+
+                this.reply(this.commentID) // добавляется возможность ответить на конкретный комментарий 
+
                 this.commentID++
-                this.reply(this.commentID) // добавляется возможность ответить на кокретный комментарий 
                 this.textarea.clearTextarea() // очищается поле
             }   
         }
@@ -49,14 +52,14 @@ class User extends CommentSystem { // класс пользователя
     }
 
     private reply(id: number) {
-        const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
-        const commentBlock = comments !== null ? comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
+        this.comments = document.querySelector('.commentSystem__comments')
+        const commentBlock = this.comments !== null ? this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
         
-        if(commentBlock && comments) {
+        if(commentBlock && this.comments) {
             const prenicknameElement: HTMLElement | null = commentBlock.querySelector('.commentBlock__nickname') // получение ника того кому отвечают
             const replyBtn: HTMLElement | null = commentBlock.querySelector('.commentBlock__btnReply') // получение кнопки "ответить" 
 
-            comments.addEventListener('click', (event) => { // обработчик нажатия на кнопку ответить
+            this.comments.addEventListener('click', (event) => { // обработчик нажатия на кнопку ответить
                 if(event.target === replyBtn) {
                     if(this.sendBtnElement) this.sendBtnElement.removeEventListener('click', this.sendBtnListener)
                     this.textarea.changeForm('Введите ваш ответ пользователю', 'Ответить')
@@ -64,10 +67,9 @@ class User extends CommentSystem { // класс пользователя
                     this.sendBtnListener = () => { // перезапись обработчика кнопки отправки сообщения для ответа
                         if(this.sendBtnElement && !(this.sendBtnElement.classList.contains('--disable'))) {
                             const preparedComment = this.prepareComment()
-
                             if(prenicknameElement) {
                                 const prenickname: string = prenicknameElement.innerHTML
-                                super.createReply(this.commentID, this.nickname, prenickname, this.ava, preparedComment.text, preparedComment.currentDate) // создание ответа
+                                super.createReply(id, this.nickname, prenickname, this.ava, preparedComment.text, preparedComment.currentDate) // создание ответа
                                 this.textarea.changeForm('Введите текст сообщения...', 'Отправить')
                                 this.textarea.clearTextarea()
                             }
