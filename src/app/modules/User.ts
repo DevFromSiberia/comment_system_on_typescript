@@ -8,17 +8,17 @@ class User extends CommentSystem { // класс пользователя
 
     constructor(nickname: string, ava: string) {
         super()
-
+        
         this.nickname = nickname
         this.ava = ava
         
         this.textarea = new UserForm() // получения текстового поля с кнопкой пользователя
-        
-        this.commentID = 0
 
         this.sendBtnListener = () => {}
         this.sendBtnElement = document.querySelector('.userBlock__btn')
 
+        this.commentID = Object.keys(this.getDATA().history).length // получение id комментария исходя из количества комментариев в истории
+        
         this.createUser() // метод создания пользователя
 
         this.comment() // активация режима комментирования
@@ -40,8 +40,8 @@ class User extends CommentSystem { // класс пользователя
                 const preparedComment = this.prepareComment() // подготовка комментария
                 
                 super.createCommentBlock(this.commentID, this.nickname, this.ava, preparedComment.text, preparedComment.currentDate) // создается комментарий от текущего пользователя
-                this.reply(this.commentID) // добавляется возможность ответить на кокретный комментарий
-                this.commentID++ 
+                this.commentID++
+                this.reply(this.commentID) // добавляется возможность ответить на кокретный комментарий 
                 this.textarea.clearTextarea() // очищается поле
             }   
         }
@@ -67,7 +67,7 @@ class User extends CommentSystem { // класс пользователя
 
                             if(prenicknameElement) {
                                 const prenickname: string = prenicknameElement.innerHTML
-                                super.createReply(id, this.nickname, prenickname, this.ava, preparedComment.text, preparedComment.currentDate) // создание ответа
+                                super.createReply(this.commentID, this.nickname, prenickname, this.ava, preparedComment.text, preparedComment.currentDate) // создание ответа
                                 this.textarea.changeForm('Введите текст сообщения...', 'Отправить')
                                 this.textarea.clearTextarea()
                             }

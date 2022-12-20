@@ -1,12 +1,36 @@
 class CommentSystem {
-    
+    private DATA: string | null
+
+    constructor() {
+        if(!localStorage.getItem('DATA')) {
+            this.DATA = '{"history": {}}'
+            localStorage.setItem('DATA', this.DATA)
+        } else {
+            this.DATA = localStorage.getItem('DATA')
+        }
+    }
 
     public createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
-        const commentID:number = id
+        const commentID: number = id
         const commentNickname: string = userNickname
         const commentAvaPath: string = userAva
         const commentTime: string = currentDate
         const commentText: string = commentsTxt 
+
+        const currentData = this.getDATA()  
+        currentData.history[`commentBlock${commentID}`] = {
+            id: commentID,
+            comment: {
+                commentNickname: commentNickname,
+                commentAvaPath: commentAvaPath,
+                commentTime: commentTime,
+                commentText: commentText
+            },
+            reply: {}
+        }
+        
+        localStorage.setItem('DATA', JSON.stringify(currentData))
+        
 
         const commentHTMLTemplate = 
         `<div class="commentSystem__commentBlock" data-id=${commentID}>
@@ -46,12 +70,23 @@ class CommentSystem {
         `
 
         const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
+        
         this.render(comments, commentHTMLTemplate, "afterbegin")       
+    }
+
+    public getDATA(): any {
+        const currentData: string | null = localStorage.getItem('DATA')
+        if(currentData) {
+            const parseData = JSON.parse(currentData)
+            if(Object.keys(parseData).includes('history')) {
+                return parseData
+            }
+        }
     }
 
     public createReply(id:number, userNickname: string, PreNickname: string, userAva: string, commentsTxt:string, currentDate: string) {
 
-        const replyID: number = id
+        const commentID: number = id
 
         const replyNickname: string = userNickname
         const replyPreNickname: string = PreNickname
@@ -94,7 +129,7 @@ class CommentSystem {
             </div>
         </div>`
 
-        const commentBlock: HTMLElement | null = document.querySelector(`.commentSystem__commentBlock[data-id="${replyID}"`)
+        const commentBlock: HTMLElement | null = document.querySelector(`.commentSystem__commentBlock[data-id="${commentID}"`)
         this.render(commentBlock, replyHTMLTemplate, "afterend")
     }
 
