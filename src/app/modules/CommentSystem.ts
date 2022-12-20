@@ -1,6 +1,9 @@
 class CommentSystem {
     private DATA: string | null
     protected comments: HTMLElement | null
+    protected sendBtnListener: EventListener
+    protected textarea: UserForm
+    
     constructor() {
         if(!localStorage.getItem('DATA')) {
             this.DATA = '{"history": {}}'
@@ -9,6 +12,9 @@ class CommentSystem {
             this.DATA = localStorage.getItem('DATA')
         }
         this.comments = document.querySelector('.commentSystem__comments')
+        this.textarea = new UserForm() // получения текстового поля с кнопкой пользователя
+
+        this.sendBtnListener = () => {}
     }
 
     public createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
@@ -27,7 +33,9 @@ class CommentSystem {
         localStorage.setItem('DATA', JSON.stringify(currentData))
 
         const commentHTMLTemplate = this.createTemplateComment(id, userNickname, userAva, commentsTxt, currentDate)
-        this.render(this.comments, commentHTMLTemplate, "afterbegin")       
+        this.render(this.comments, commentHTMLTemplate, "afterbegin")
+        
+        this.reply(id, userNickname, userAva)
     }
 
     public getDATA(): any {
@@ -40,13 +48,55 @@ class CommentSystem {
         }
     }
 
-    public createReply(id:number, userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) {
+    private createReply(id:number, userNickname: string, userAva: string, preNickname: string,replyTxt:string, date: string) {
 
         const replyHTMLTemplate = this.createTemplateReply(userNickname, preNickname, userAva, replyTxt, date)
 
         if(this.comments) {
             const commentBlock: HTMLElement | null = this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`)
             this.render(commentBlock, replyHTMLTemplate, "afterend")
+        }
+    }
+
+    private reply(id: number, curNickname: string, userAva: string) {
+        const commentBlock = this.comments !== null ? this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
+        const sendBtnElement = this.comments !== null ? document.querySelector('.userBlock__btn') : null
+        console.log(sendBtnElement)
+        if(commentBlock && this.comments) {
+            const prenicknameElement: HTMLElement | null = commentBlock.querySelector('.commentBlock__nickname') // получение ника того кому отвечают
+            const replyBtn: HTMLElement | null = commentBlock.querySelector('.commentBlock__btnReply') // получение кнопки "ответить" 
+            
+            this.comments.addEventListener('click', (event) => { // обработчик нажатия на кнопку ответить
+                if(event.target === replyBtn) {
+                    
+                    if(sendBtnElement) sendBtnElement.removeEventListener('click', this.sendBtnListener)
+                    this.textarea.changeForm('Введите ваш ответ пользователю', 'Ответить')
+
+                    this.sendBtnListener = () => { // перезапись обработчика кнопки отправки сообщения для ответа
+                        if(sendBtnElement && !(sendBtnElement.classList.contains('--disable'))) {
+                            const preparedComment = this.prepareComment()
+                            if(prenicknameElement) {
+                                const prenickname: string = prenicknameElement.innerHTML
+                                this.createReply(id, curNickname, userAva, prenickname, preparedComment.text, preparedComment.currentDate) // создание ответа
+                                this.textarea.changeForm('Введите текст сообщения...', 'Отправить')
+                                this.textarea.clearTextarea()
+                            }
+                        }
+                    }
+                    if(sendBtnElement) sendBtnElement.addEventListener('click', this.sendBtnListener)
+                }
+            })
+        }        
+    }
+
+    protected prepareComment() {
+        const text = this.textarea.getTextTextarea() // получение текста из текстового поля
+        const date = new Date()
+        const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}`
+
+        return {
+            text: text,
+            currentDate: currentDate
         }
     }
 
