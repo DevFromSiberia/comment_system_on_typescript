@@ -3,21 +3,50 @@ class CommentSystem {
     protected comments: HTMLElement | null
     protected sendBtnListener: EventListener
     protected textarea: UserForm
+    private sendBtnElement: HTMLElement | null
+    private commentID: number
+    private user: User
     
-    constructor() {
-        if(!localStorage.getItem('DATA')) {
+    constructor(userNickname: string, userAva: string) {
+        this.user = new User(userNickname, userAva) // создание пользователя
+        this.textarea = new UserForm() // создание текстового поля
+        
+        if(!localStorage.getItem('DATA')) { // инициализация переменной под данные
             this.DATA = '{"history": {}}'
             localStorage.setItem('DATA', this.DATA)
         } else {
             this.DATA = localStorage.getItem('DATA')
         }
-        this.comments = document.querySelector('.commentSystem__comments')
-        this.textarea = new UserForm() // получения текстового поля с кнопкой пользователя
 
-        this.sendBtnListener = () => {}
+        this.comments = document.querySelector('.commentSystem__comments') // получение блока под комментарии
+        
+        this.sendBtnElement = document.querySelector('.userBlock__btn') // получение кнопки отправить
+        this.commentID = Object.keys(this.getDATA().history).length // получение id комментария исходя из количества комментариев в истории
+
+        this.sendBtnListener = () => {} // объявление функции под обработчик на кнопку отправить
+
+        this.comment(this.user.nickname, this.user.ava) // включение режима комментирования
+
+        this.updateComments() // обновление списка комментарие в соответствии с данными в истории
     }
 
-    public createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
+    private comment(userNickname: string, userAva: string) {// метод режима комментирования
+        if(this.sendBtnElement) this.sendBtnElement.removeEventListener('click', this.sendBtnListener)
+        this.textarea.changeForm('Введите текст сообщения...', 'Отправить')
+
+        this.sendBtnListener = () => {
+            if(this.sendBtnElement && !(this.sendBtnElement.classList.contains('--disable'))) { // проверяется доступность кнопки
+                const preparedComment = this.prepareComment() // подготовка комментария
+                
+                this.createCommentBlock(this.commentID, userNickname, userAva, preparedComment.text, preparedComment.currentDate) // создается комментарий от текущего пользователя
+                this.commentID++
+                this.textarea.clearTextarea() // очищается поле
+            }   
+        }
+        if(this.sendBtnElement) this.sendBtnElement.addEventListener('click', this.sendBtnListener)
+    }
+
+    private createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
         const currentData = this.getDATA()  
         currentData.history[`commentBlock${id}`] = {
             id: id,
@@ -35,10 +64,10 @@ class CommentSystem {
         const commentHTMLTemplate = this.createTemplateComment(id, userNickname, userAva, commentsTxt, currentDate)
         this.render(this.comments, commentHTMLTemplate, "afterbegin")
         
-        this.reply(id, userNickname, userAva)
+        this.reply(id, userNickname, userAva) // включение режима ответа на созданный коментарий
     }
 
-    public getDATA(): any {
+    private getDATA(): any { //метод для получения данных из истории
         const currentData: string | null = localStorage.getItem('DATA')
         if(currentData) {
             const parseData = JSON.parse(currentData)
@@ -48,7 +77,7 @@ class CommentSystem {
         }
     }
 
-    private createReply(id:number, userNickname: string, userAva: string, preNickname: string,replyTxt:string, date: string) {
+    private createReply(id:number, userNickname: string, userAva: string, preNickname: string,replyTxt:string, date: string) { // метод для создания блока с ответом
 
         const replyHTMLTemplate = this.createTemplateReply(userNickname, preNickname, userAva, replyTxt, date)
 
@@ -58,10 +87,10 @@ class CommentSystem {
         }
     }
 
-    private reply(id: number, curNickname: string, userAva: string) {
+    private reply(id: number, curNickname: string, userAva: string) { // метод режима ответа
         const commentBlock = this.comments !== null ? this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
         const sendBtnElement = this.comments !== null ? document.querySelector('.userBlock__btn') : null
-        console.log(sendBtnElement)
+
         if(commentBlock && this.comments) {
             const prenicknameElement: HTMLElement | null = commentBlock.querySelector('.commentBlock__nickname') // получение ника того кому отвечают
             const replyBtn: HTMLElement | null = commentBlock.querySelector('.commentBlock__btnReply') // получение кнопки "ответить" 
@@ -78,18 +107,22 @@ class CommentSystem {
                             if(prenicknameElement) {
                                 const prenickname: string = prenicknameElement.innerHTML
                                 this.createReply(id, curNickname, userAva, prenickname, preparedComment.text, preparedComment.currentDate) // создание ответа
-                                this.textarea.changeForm('Введите текст сообщения...', 'Отправить')
+                                
                                 this.textarea.clearTextarea()
+                                this.comment(curNickname, userAva)
                             }
                         }
                     }
                     if(sendBtnElement) sendBtnElement.addEventListener('click', this.sendBtnListener)
+                } 
+                else {
+                    this.comment(curNickname, userAva)
                 }
             })
         }        
     }
 
-    protected prepareComment() {
+    private prepareComment() { // метод подготовки комментария
         const text = this.textarea.getTextTextarea() // получение текста из текстового поля
         const date = new Date()
         const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}`
@@ -100,8 +133,9 @@ class CommentSystem {
         }
     }
 
-    protected updateComments() {
+    private updateComments() { // метод для обновления списка комментария в соответствии с историей
         const currentData = this.getDATA()
+        
         let htmlTemplateComment: string;
         let commentBlock: string | number
         for(commentBlock in currentData.history) {
@@ -116,7 +150,7 @@ class CommentSystem {
         }
     }
 
-    private createTemplateComment(id:number, userNickname: string, userAva: string, commentsTxt:string, date: string) {
+    private createTemplateComment(id:number, userNickname: string, userAva: string, commentsTxt:string, date: string) { // для хранения и получения шаблона комментария по необходимости
         return `
         <div class="commentSystem__commentBlock" data-id=${id}>
             <div class="commentBlock__comment">
@@ -155,7 +189,7 @@ class CommentSystem {
     `
     }
 
-    private createTemplateReply(userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) {
+    private createTemplateReply(userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) { //для хранения и получения шаблона ответа по необходимости
         return `
         <div class="commentBlock__reply">
             <div class="commentBlock__ava">
@@ -191,7 +225,7 @@ class CommentSystem {
         </div>`
     }
 
-    private render(element: HTMLElement | null, html: string, wayToAdd: InsertPosition) {
+    private render(element: HTMLElement | null, html: string, wayToAdd: InsertPosition) { // метод отрисовки комментариев
        if(element) element.insertAdjacentHTML(wayToAdd , html)
     }
 }
