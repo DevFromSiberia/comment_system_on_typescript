@@ -73,16 +73,9 @@ class UserForm { // класс текстового поля с кнопкой �
         if(this.sendBtn) this.sendBtn.classList.add('--disable')
     }
 
-    public focusTexarea() {
+    public changeForm(textareaText: string, btnText: string) {
+        if(this.textarea) this.textarea.placeholder = textareaText
         if(this.textarea) this.textarea.focus()
-    }
-
-    public changePlaceholderTexarea(str: string) {
-        if(this.textarea) this.textarea.placeholder = str
-        
-    }
-
-    public changeSendBtnText(str: string) {
-        if(this.sendBtn) this.sendBtn.innerHTML = str
+        if(this.sendBtn) this.sendBtn.innerHTML = btnText
     }
 }
