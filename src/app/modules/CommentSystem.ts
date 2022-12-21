@@ -1,8 +1,8 @@
 class CommentSystem {
     private DATA: string | null
-    protected comments: HTMLElement | null
-    protected sendBtnListener: EventListener
-    protected textarea: UserForm
+    private comments: HTMLElement | null
+    private sendBtnListener: EventListener
+    private textarea: UserForm
     private sendBtnElement: HTMLElement | null
     private commentID: number
     private user: User
@@ -47,8 +47,8 @@ class CommentSystem {
     }
 
     private createCommentBlock(id:number, userNickname: string, userAva: string, commentsTxt:string, currentDate: string) { // метод для создания комментария
-        const currentData = this.getDATA()  
-        currentData.history[`commentBlock${id}`] = {
+        const currentData = this.getDATA()  // получение текущих данных
+        currentData.history[`commentBlock${id}`] = { // запись блока с комментарием
             id: id,
             comment: {
                 commentNickname: userNickname,
@@ -59,10 +59,10 @@ class CommentSystem {
             reply: {}
         }
         
-        localStorage.setItem('DATA', JSON.stringify(currentData))
+        localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление данных
 
         const commentHTMLTemplate = this.createTemplateComment(id, userNickname, userAva, commentsTxt, currentDate)
-        this.render(this.comments, commentHTMLTemplate, "afterbegin")
+        this.render(this.comments, commentHTMLTemplate, "afterbegin") // отрисовка шаблона
         
         this.reply(id, userNickname, userAva) // включение режима ответа на созданный коментарий
     }
@@ -77,9 +77,20 @@ class CommentSystem {
         }
     }
 
-    private createReply(id:number, userNickname: string, userAva: string, preNickname: string,replyTxt:string, date: string) { // метод для создания блока с ответом
+    private createReply(id:number, userNickname: string, userAva: string, preNickname: string, replyTxt:string, date: string) { // метод для создания блока с ответом
 
         const replyHTMLTemplate = this.createTemplateReply(userNickname, preNickname, userAva, replyTxt, date)
+
+        const currentData = this.getDATA()  // получение текущих данных
+        currentData.history[`commentBlock${id}`].reply = { // запись блока с комментарием
+            replyNickname: userNickname,
+            preNickname: preNickname,
+            replyAvaPath: userAva,
+            replyText: replyTxt,
+            replyTime: date
+        }
+        
+        localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление данных
 
         if(this.comments) {
             const commentBlock: HTMLElement | null = this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`)
@@ -88,8 +99,10 @@ class CommentSystem {
     }
 
     private reply(id: number, curNickname: string, userAva: string) { // метод режима ответа
-        const commentBlock = this.comments !== null ? this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
-        const sendBtnElement = this.comments !== null ? document.querySelector('.userBlock__btn') : null
+        
+        const commentBlock =this.comments ? this.comments.querySelector(`.commentSystem__commentBlock[data-id="${id}"`) : null
+
+        const sendBtnElement = document.querySelector('.userBlock__btn')
 
         if(commentBlock && this.comments) {
             const prenicknameElement: HTMLElement | null = commentBlock.querySelector('.commentBlock__nickname') // получение ника того кому отвечают
@@ -100,7 +113,6 @@ class CommentSystem {
                     
                     if(sendBtnElement) sendBtnElement.removeEventListener('click', this.sendBtnListener)
                     this.textarea.changeForm('Введите ваш ответ пользователю', 'Ответить')
-
                     this.sendBtnListener = () => { // перезапись обработчика кнопки отправки сообщения для ответа
                         if(sendBtnElement && !(sendBtnElement.classList.contains('--disable'))) {
                             const preparedComment = this.prepareComment()
@@ -137,17 +149,29 @@ class CommentSystem {
         const currentData = this.getDATA()
         
         let htmlTemplateComment: string;
+        let htmlTemplateReply: string;
         let commentBlock: string | number
+
         for(commentBlock in currentData.history) {
             htmlTemplateComment = this.createTemplateComment(
                 currentData.history[commentBlock].id,
                 currentData.history[commentBlock].comment.commentNickname,
                 currentData.history[commentBlock].comment.commentAvaPath,
                 currentData.history[commentBlock].comment.commentText,
-                currentData.history[commentBlock].comment.commentTime
+                currentData.history[commentBlock].comment.commentTime,
             )
             this.render(this.comments, htmlTemplateComment, "afterbegin")
+            htmlTemplateReply = this.createTemplateReply(
+                currentData.history[commentBlock].reply.replyNickname,
+                currentData.history[commentBlock].reply.preNickname,
+                currentData.history[commentBlock].reply.replyAvaPath,
+                currentData.history[commentBlock].reply.replyText,
+                currentData.history[commentBlock].reply.replyTime,
+                )
+                const comment: HTMLElement | null = this.comments ? this.comments.querySelector(`.commentSystem__commentBlock[data-id="${currentData.history[commentBlock].id}"`) : null
+                this.render(comment, htmlTemplateReply, "afterend")
         }
+        
     }
 
     private createTemplateComment(id:number, userNickname: string, userAva: string, commentsTxt:string, date: string) { // для хранения и получения шаблона комментария по необходимости

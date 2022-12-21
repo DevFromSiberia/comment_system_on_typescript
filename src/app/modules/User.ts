@@ -8,7 +8,6 @@ class User { // класс пользователя
         this.ava = ava
         
         this.createUser() // метод создания пользователя
-
     }
 
     private createUser() { // метод создания пользователя
