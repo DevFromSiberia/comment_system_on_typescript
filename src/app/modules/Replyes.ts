@@ -1,15 +1,52 @@
 class Replyes extends CommentSystem {
+    private id: number | undefined
+    private preNickname: string | undefined
+    constructor(userForm: UserForm) {
+        super()
+        this.userForm = userForm
 
-    public addListenerReplyBtn(id: number) { // создает событие на кнопке "ответить в каждом комент блоке"
-        const commentBlock: HTMLElement | null = document.querySelector(`[data-id="${id}"]`)
-        const btnReplyListener = () => {
-            console.log(commentBlock?.dataset.id)
-        }
-        if(commentBlock) commentBlock.addEventListener('click', btnReplyListener)
+        this.id = 0 // для хранения id "комент блока"
+        this.preNickname = "" // для хранения ника того кому ответ
     }
 
-    private createReplyes(userNickname: string, userAva: string, preNickname: string, replyTxt:string) { // метод для создания блока с ответом 
+    // addListenerReplyBtn - создает событие на кнопке "ответить" в каждом "комент блоке". Вызывается при создании комментария или при обновлении списка комментариев
+    public addListenerReplyBtn(id: number) { 
+        const commentBlock: HTMLElement | null = document.querySelector(`[data-id="${id}"]`) // получение конкретного "комент блока"
+        if(commentBlock) {
+            const replyBtn = commentBlock.querySelector('.commentBlock__btnReply')
+            const btnReplyListener = (event: Event) => {
+                if (event.target === replyBtn) {
+                    this.userForm.changeBtn("Ответить")
+                    this.userForm.changeTextarea("Введите ваш ответ пользователю")
+                    if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'reply' // перевод кнопки в режим ответа
+                    if(commentBlock.dataset.id) this.id = +commentBlock.dataset.id
+                    this.preNickname = commentBlock.querySelector('.commentBlock__nickname')?.innerHTML
+                } else {
+                    this.userForm.changeBtn("Отправить")
+                    this.userForm.changeTextarea("Введите текст сообщения...")
+                    if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'comment' // перевод кнопки обратно в режим комментария
+                }
+            }
+            if(commentBlock) commentBlock.addEventListener('click', btnReplyListener)
+        }
+    }
 
+    public createReplyes(replyText:string) { // метод для создания блока с ответом 
+        const id = this.id
+        const nickName = super.getUserNickname()
+        const preNickname = this.preNickname
+        const ava = super.getUserAva()
+        const currentDate = super.getCurrentDate() // получение текущей даты
+        const replyTxt =  replyText
+
+        const newReply = { // запись блока с комментарием
+            id: id,
+            nickname: nickName,
+            preNickname: preNickname,
+            ava: ava,
+            date: currentDate,
+            replyText: replyTxt
+        }
     }
     
     private createTemplateReply(userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) { // для хранения и получения шаблона ответа по необходимости

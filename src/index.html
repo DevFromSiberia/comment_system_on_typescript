@@ -68,7 +68,7 @@
 
             <div class="commentSystem__userBlock">
                 <div class="userBlock__ava">
-                    <img class="ava"  src="./assets/img/ava.png" alt="">
+                    <img class="ava" src="./assets/img/ava.png" alt="">
                 </div>
                 <div class="userBlock__content">
                     <div class="userBlock__title">
@@ -77,7 +77,7 @@
                     </div>
                     <form class="userBlock__form">
                         <textarea class="userBlock__textarea" type="text" placeholder="Введите текст сообщения..." cols="1" rows="1" maxlength="1000"></textarea>
-                        <button class="userBlock__btn --disable" type="button">Отправить</button>
+                        <button class="userBlock__btn --disable" type="button" data-mode="comment">Отправить</button>
                         <p class="userBlock__maxCharWarning">Слишком длинное сообщение</p>  
                     </form>
                 </div>
@@ -88,12 +88,12 @@
         </div><!--comment system -->
     </main>
 
+    <script src="../dist/modules/UserForm.js"></script>
     <script src="../dist/modules/CommentSystem.js"></script>
     <script src="../dist/modules/FilterDropdown.js"></script>
     <script src="../dist/modules/Comments.js"></script>
     <script src="../dist/modules/Replyes.js"></script>
-    <script src="../dist/modules/UserForm.js"></script>
-    <script src="../dist/modules/User.js"></script>
+    
     <script src="../dist/index.js"></script>
 </body>
 </html>

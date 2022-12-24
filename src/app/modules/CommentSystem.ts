@@ -1,8 +1,8 @@
 class CommentSystem {
     private DATA: string | null
-    
     private commentIDList: Array<number>
 
+    protected userForm: UserForm
     constructor() {
         if(!localStorage.getItem('DATA')) { // инициализация переменной под данные
             this.DATA = '{"history": {}}'
@@ -11,6 +11,31 @@ class CommentSystem {
             this.DATA = localStorage.getItem('DATA')
         }
         this.commentIDList = []
+        this.userForm = new UserForm()
+    }
+
+    public createUser(nickname: string, ava: string): void { // метод создания пользователя
+        const userAva: HTMLElement | null = document.querySelector('.ava')
+        const userNickname: HTMLElement | null = document.querySelector('.userBlock__nickname')
+        if(userNickname !== null) userNickname.innerHTML = nickname
+        if(userAva !== null) userAva.setAttribute('src', ava)
+        const comment = new Comments(this.userForm)
+    }
+
+    public getUserNickname() {
+        const userNicknameElement: HTMLElement | null = document.querySelector('.userBlock__nickname')
+        if(userNicknameElement) {
+            const userNickname = userNicknameElement.innerHTML
+            return userNickname
+        }
+    }
+
+    public getUserAva() {
+        const userAvaElement: HTMLElement | null = document.querySelector('.ava')
+        if(userAvaElement !== null) {
+            const userAva = userAvaElement.getAttribute('src')
+            return userAva
+        }
     }
     
     protected getDATA(): any { //метод для получения данных из истории

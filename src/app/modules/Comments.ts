@@ -2,24 +2,41 @@ class Comments extends CommentSystem { // класс создания комме
     private commentID: number
     public replyes: Replyes
 
-    constructor() {
+    constructor(userForm: UserForm) {
         super()
-        this.commentID = Object.keys(super.getDATA().history).length// получение id комментария исходя из количества комментариев в истории 
-        
-        this.replyes = new Replyes()
+        this.commentID = Object.keys(super.getDATA().history).length // получение id комментария исходя из количества комментариев в истории 
 
+        this.replyes = new Replyes(userForm)
         this.updateComments()
+
+        const sendListener = (event: Event): void => {
+            if(userForm.sendBtn && !(userForm.sendBtn.classList.contains('--disable')) && userForm.sendBtn.dataset.mode === "comment") 
+                {
+                    const commentText = userForm.getTextTextarea()
+                    this.createCommentBlock(commentText)
+                    userForm.clearTextarea()
+                }
+            else if (userForm.sendBtn && !(userForm.sendBtn.classList.contains('--disable')) && userForm.sendBtn.dataset.mode === "reply") 
+                {
+                    const replyText = userForm.getTextTextarea()
+                    this.replyes.createReplyes(replyText)
+                    userForm.clearTextarea()
+                }
+        }
+        if(userForm.sendBtn) userForm.sendBtn.addEventListener("click", sendListener, false);    
     }
 
-    public createCommentBlock(userNickname: string, userAva: string, commentsText: string) {       
+    public createCommentBlock(commentsText: string) {  
+        const nickName = super.getUserNickname()
+        const ava = super.getUserAva()
         const currentDate = super.getCurrentDate() // получение текущей даты
         const commetsText = commentsText
 
         const newCommentBlock = { // запись блока с комментарием
             id: this.commentID,
             comment: {
-                commentNickname: userNickname,
-                commentAvaPath: userAva,
+                commentNickname: nickName,
+                commentAvaPath: ava,
                 commentTime: currentDate,
                 commentText: commetsText
             },
@@ -27,9 +44,8 @@ class Comments extends CommentSystem { // класс создания комме
         }
         super.updateHistory(this.commentID, newCommentBlock) // обновление истории
         super.updateIdList() // обновление списка с id комментариев
-
         
-        const commentHTMLTemplate = this.getTemplateComment(this.commentID, userNickname, userAva, commetsText, currentDate)
+        const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate)
         this.renderComment(commentHTMLTemplate) // отрисовка шаблона
         this.replyes.addListenerReplyBtn(this.commentID)
         this.commentID++
@@ -60,7 +76,7 @@ class Comments extends CommentSystem { // класс создания комме
         }
     }
 
-    private getTemplateComment(id:number, userNickname: string, userAva: string, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости
+    private getTemplateComment(id:number, userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости
         return `
         <div class="commentSystem__commentBlock" data-id=${id}>
             <div class="commentBlock__comment">

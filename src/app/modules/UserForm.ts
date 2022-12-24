@@ -1,19 +1,14 @@
 class UserForm { // класс текстового поля с кнопкой пользователя
     private textarea: HTMLInputElement | null
     private charWarning: HTMLElement | null
-    private sendBtn: HTMLElement | null
+    public sendBtn: HTMLElement | null
     private paddingBottomPlusTop: number
     private maxChar: number
 
-    private comments: Comments
-
     private autosize
     private checkQuantityChar
-    private sendListener
 
-    constructor(userNickname: string, userAva: string) {
-        this.comments = new Comments()
-        
+    constructor() {
         this.textarea = document.querySelector('.userBlock__textarea') // получение элемента текстового поля
         this.charWarning = document.querySelector('.userBlock__maxCharWarning') // получение элемента предупрежния о превышении символов
         this.sendBtn = document.querySelector('.userBlock__btn') // получение элемента кнопки отправить
@@ -52,13 +47,6 @@ class UserForm { // класс текстового поля с кнопкой �
                     
             }
         }
-
-        this.sendListener = (): void => {
-            const commentText = this.getTextTextarea()
-            this.comments.createCommentBlock(userNickname, userAva, commentText)
-            this.clearTextarea()
-        }
-
         this.listenerUserForm()
     }
 
@@ -68,8 +56,6 @@ class UserForm { // класс текстового поля с кнопкой �
             this.textarea.addEventListener("input", this.autosize, false);
 
             this.textarea.addEventListener("keyup", this.checkQuantityChar, false);
-
-            this.sendBtn.addEventListener("click", this.sendListener, false);
         }
     }
 
@@ -77,16 +63,6 @@ class UserForm { // класс текстового поля с кнопкой �
         const textareaElement: HTMLInputElement | null = document.querySelector('.userBlock__textarea')
         const text = textareaElement !== null ? textareaElement.value: ""
         return text
-    }
-
-    public getBtnSendBtn() {
-        const sendBtnElement = document.querySelector('.userBlock__btn')
-        this.changeBtn("Отправить")
-    }
-
-    public getBtnAnswerBtn() {
-        const sendBtnElement = document.querySelector('.userBlock__btn')
-        this.changeBtn("Ответить")
     }
 
     public clearTextarea() { // метод очистки текстового поля текстового поля
@@ -97,11 +73,11 @@ class UserForm { // класс текстового поля с кнопкой �
         if(this.sendBtn) this.sendBtn.classList.add('--disable')
     }
 
-    private changeTextarea(textareaText: string) {
+    public changeTextarea(textareaText: string) {
         if(this.textarea) this.textarea.placeholder = textareaText
     }
 
-    private changeBtn(text: string) {
+    public changeBtn(text: string) {
         if(this.sendBtn) this.sendBtn.innerHTML = text
     }
 }
