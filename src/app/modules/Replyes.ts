@@ -104,7 +104,6 @@ class Replyes extends CommentSystem {
                 commentBlock.replyes[replyBlock].replyText,
                 commentBlock.replyes[replyBlock].date,
             )
-            console.log(htmlTemplateReply)
             this.renderReply(commentBlock.id, htmlTemplateReply) 
         } 
     }

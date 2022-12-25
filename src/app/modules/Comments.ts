@@ -1,10 +1,10 @@
 class Comments extends CommentSystem { // класс создания коммент блока
     private commentID: number
-    public replyes: Replyes
+    private replyes: Replyes
 
     constructor(userForm: UserForm) {
         super()
-        this.commentID = Object.keys(super.getDATA().history).length // получение id комментария исходя из количества комментариев в истории 
+        this.commentID = super.getNumberComments() // получение id комментария исходя из количества комментариев в истории 
 
         this.replyes = new Replyes(userForm)
         this.updateComments()
@@ -26,7 +26,7 @@ class Comments extends CommentSystem { // класс создания комме
         if(userForm.sendBtn) userForm.sendBtn.addEventListener("click", sendListener, false);    
     }
 
-    public createCommentBlock(commentsText: string) {  
+    protected createCommentBlock(commentsText: string) {  
         const nickName = super.getUserNickname()
         const ava = super.getUserAva()
         const currentDate = super.getCurrentDate() // получение текущей даты
@@ -45,10 +45,13 @@ class Comments extends CommentSystem { // класс создания комме
         super.updateHistoryComments(this.commentID, newCommentBlock) // обновление истории
         super.updateIdList() // обновление списка с id комментариев
         
+        
         const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate)
         this.renderComment(commentHTMLTemplate) // отрисовка шаблона
         this.replyes.addListenerReplyBtn(this.commentID)
         this.commentID++
+
+        super.updateNumberComments()
     }
 
     private renderComment(html: string) { // метод отрисовки комментариев
@@ -76,6 +79,7 @@ class Comments extends CommentSystem { // класс создания комме
             this.replyes.updateReply(currentData.history[commentBlock])
             this.replyes.addListenerReplyBtn(currentData.history[commentBlock].id)
         }
+        super.updateNumberComments()
     }
 
     private getTemplateComment(id:number, userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости

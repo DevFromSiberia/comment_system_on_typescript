@@ -1,6 +1,7 @@
 class CommentSystem {
     private DATA: string | null
     private commentIDList: Array<number>
+    private numberComments: number
 
     protected userForm: UserForm
     constructor() {
@@ -12,6 +13,8 @@ class CommentSystem {
         }
         this.commentIDList = []
         this.userForm = new UserForm()
+
+        this.numberComments = 0
     }
 
     public createUser(nickname: string, ava: string): void { // метод создания пользователя
@@ -19,10 +22,11 @@ class CommentSystem {
         const userNickname: HTMLElement | null = document.querySelector('.userBlock__nickname')
         if(userNickname !== null) userNickname.innerHTML = nickname
         if(userAva !== null) userAva.setAttribute('src', ava)
+
         const comment = new Comments(this.userForm)
     }
 
-    public getUserNickname() {
+    protected getUserNickname() {
         const userNicknameElement: HTMLElement | null = document.querySelector('.userBlock__nickname')
         if(userNicknameElement) {
             const userNickname = userNicknameElement.innerHTML
@@ -30,7 +34,7 @@ class CommentSystem {
         }
     }
 
-    public getUserAva() {
+    protected getUserAva() {
         const userAvaElement: HTMLElement | null = document.querySelector('.ava')
         if(userAvaElement !== null) {
             const userAva = userAvaElement.getAttribute('src')
@@ -74,5 +78,15 @@ class CommentSystem {
                 this.commentIDList.push(history[commentBlock].id)
             }
         }
+    }
+
+    protected updateNumberComments() {
+        const numberCommentsElement = document.querySelector('.commentSystem__count')
+        this.numberComments = this.getNumberComments()
+        if(numberCommentsElement) numberCommentsElement.innerHTML = `(${this.numberComments})`
+    }
+
+    protected getNumberComments(): number {
+        return Object.keys(this.getDATA().history).length
     }
 }
