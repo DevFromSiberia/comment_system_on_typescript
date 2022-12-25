@@ -2,8 +2,10 @@ class CommentSystem {
     private DATA: string | null
     private commentIDList: Array<number>
     private numberComments: number
-
+    
     protected userForm: UserForm
+    protected rating: Rating
+    
     constructor() {
         if(!localStorage.getItem('DATA')) { // инициализация переменной под данные
             this.DATA = '{"history": {}}'
@@ -12,7 +14,9 @@ class CommentSystem {
             this.DATA = localStorage.getItem('DATA')
         }
         this.commentIDList = []
+
         this.userForm = new UserForm()
+        this.rating = new Rating()
 
         this.numberComments = 0
     }
@@ -58,15 +62,15 @@ class CommentSystem {
         return currentDate
     }
 
-    protected updateHistoryComments(id: number,commentBlock: object, replyBlock?: object): void {
+    protected updateHistoryComments(commentID: number,commentBlock: object): void {
         const currentData = this.getDATA() // получение текущих данных
-        currentData.history[`commentBlock_${id}`] = commentBlock
+        currentData.history[`commentBlock_${commentID}`] = commentBlock
         localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление истории
     } 
     
-    protected updateHistoryReply(id: number | undefined, replyID: number, replyBlock: object) {
+    protected updateHistoryReply(commentID: number | undefined, replyID: number, replyBlock: object) {
         const currentData = this.getDATA() // получение текущих данных
-        currentData.history[`commentBlock_${id}`].replyes[`reply_${replyID}`] = replyBlock
+        currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`] = replyBlock
         localStorage.setItem('DATA', JSON.stringify(currentData))
     }
 
@@ -74,8 +78,8 @@ class CommentSystem {
         const history = this.getDATA().history
         let commentBlock
         for(commentBlock in history) {
-            if(!this.commentIDList.includes(history[commentBlock].id)) {
-                this.commentIDList.push(history[commentBlock].id)
+            if(!this.commentIDList.includes(history[commentBlock].commentID)) {
+                this.commentIDList.push(history[commentBlock].commentID)
             }
         }
     }

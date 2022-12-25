@@ -7,6 +7,7 @@ class Comments extends CommentSystem { // класс создания комме
         this.commentID = super.getNumberComments() // получение id комментария исходя из количества комментариев в истории 
 
         this.replyes = new Replyes(userForm)
+
         this.updateComments()
 
         const sendListener = (event: Event): void => {
@@ -33,7 +34,7 @@ class Comments extends CommentSystem { // класс создания комме
         const commetsText = commentsText
 
         const newCommentBlock = { // запись блока с комментарием
-            id: this.commentID,
+            commentID: this.commentID,
             comment: {
                 commentNickname: nickName,
                 commentAvaPath: ava,
@@ -48,9 +49,12 @@ class Comments extends CommentSystem { // класс создания комме
         
         const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate)
         this.renderComment(commentHTMLTemplate) // отрисовка шаблона
+        
         this.replyes.addListenerReplyBtn(this.commentID)
+        this.rating.addListenerCommentsRatingBtns(this.commentID)
+        
         this.commentID++
-
+       
         super.updateNumberComments()
     }
 
@@ -68,7 +72,7 @@ class Comments extends CommentSystem { // класс создания комме
 
         for(commentBlock in currentData.history) {
             htmlTemplateComment = this.getTemplateComment(
-                currentData.history[commentBlock].id,
+                currentData.history[commentBlock].commentID,
                 currentData.history[commentBlock].comment.commentNickname,
                 currentData.history[commentBlock].comment.commentAvaPath,
                 currentData.history[commentBlock].comment.commentText,
@@ -77,14 +81,16 @@ class Comments extends CommentSystem { // класс создания комме
             
             this.renderComment(htmlTemplateComment)
             this.replyes.updateReply(currentData.history[commentBlock])
-            this.replyes.addListenerReplyBtn(currentData.history[commentBlock].id)
+
+            this.replyes.addListenerReplyBtn(currentData.history[commentBlock].commentID)
+            this.rating.addListenerCommentsRatingBtns(currentData.history[commentBlock].commentID)
         }
         super.updateNumberComments()
     }
 
-    private getTemplateComment(id:number, userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости
+    private getTemplateComment(commentID:number, userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости
         return `
-        <div class="commentSystem__commentBlock" data-id=${id}>
+        <div class="commentSystem__commentBlock" data-commentid=${commentID}>
             <div class="commentBlock__comment">
                 <div class="commentBlock__ava">
                     <img  src="${userAva}" alt="avatar">
@@ -109,7 +115,7 @@ class Comments extends CommentSystem { // класс создания комме
                             </svg>
                             В избранном
                         </button>
-                        <div class="btnBlock__rate">
+                        <div class="btnBlock__rating">
                             <button class="minus">-</button>
                             <span class="likeCounter">0</span>
                             <button class="plus">+</button>

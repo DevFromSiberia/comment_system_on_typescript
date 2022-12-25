@@ -497,7 +497,7 @@ li {
     margin-right: 10px;
 }
 
-.btnBlock__rate {
+.btnBlock__rating {
     display: flex;
 }
 
@@ -626,7 +626,7 @@ li {
 }
 
 @media (max-width: 550px) {
-    .btnBlock__rate {
+    .btnBlock__rating {
         flex-direction: column;
         align-items: center;
     }
