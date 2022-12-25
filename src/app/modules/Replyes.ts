@@ -1,12 +1,14 @@
 class Replyes extends CommentSystem {
     private id: number | undefined
     private preNickname: string | undefined
+    private replyID: number
     constructor(userForm: UserForm) {
         super()
         this.userForm = userForm
 
         this.id = 0 // для хранения id "комент блока"
         this.preNickname = "" // для хранения ника того кому ответ
+        this.replyID = 0
     }
 
     // addListenerReplyBtn - создает событие на кнопке "ответить" в каждом "комент блоке". Вызывается при создании комментария или при обновлении списка комментариев
@@ -21,6 +23,7 @@ class Replyes extends CommentSystem {
                     if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'reply' // перевод кнопки в режим ответа
                     if(commentBlock.dataset.id) this.id = +commentBlock.dataset.id
                     this.preNickname = commentBlock.querySelector('.commentBlock__nickname')?.innerHTML
+                    this.replyID = Object.keys(super.getDATA().history[`commentBlock_${id}`].replyes).length
                 } else {
                     this.userForm.changeBtn("Отправить")
                     this.userForm.changeTextarea("Введите текст сообщения...")
@@ -40,16 +43,21 @@ class Replyes extends CommentSystem {
         const replyTxt =  replyText
 
         const newReply = { // запись блока с комментарием
-            id: id,
+            id: this.id,
+            replyID: this.replyID,
             nickname: nickName,
             preNickname: preNickname,
             ava: ava,
             date: currentDate,
             replyText: replyTxt
         }
+        super.updateHistoryReply(id, this.replyID, newReply)
+
+        const replyHTMLTemplate = this.getTemplateReply(nickName, preNickname, ava, replyTxt, currentDate)
+        this.renderReply(id, replyHTMLTemplate)
     }
     
-    private createTemplateReply(userNickname: string, preNickname: string, userAva: string, replyTxt:string, date: string) { // для хранения и получения шаблона ответа по необходимости
+    private getTemplateReply(userNickname: string | undefined, preNickname: string | undefined, userAva: string | undefined | null, replyTxt:string, date: string) { // для хранения и получения шаблона ответа по необходимости
         return `
         <div class="commentBlock__reply">
             <div class="commentBlock__ava">
@@ -85,5 +93,24 @@ class Replyes extends CommentSystem {
         </div>`
     }
 
-    
+    public updateReply(commentBlock: any) {
+        let htmlTemplateReply: string;
+        let replyBlock: string
+        for(replyBlock in commentBlock.replyes) {
+            htmlTemplateReply = this.getTemplateReply(
+                commentBlock.replyes[replyBlock].nickname,
+                commentBlock.replyes[replyBlock].preNickname,
+                commentBlock.replyes[replyBlock].ava,
+                commentBlock.replyes[replyBlock].replyText,
+                commentBlock.replyes[replyBlock].date,
+            )
+            console.log(htmlTemplateReply)
+            this.renderReply(commentBlock.id, htmlTemplateReply) 
+        } 
+    }
+
+    private renderReply(id: number | undefined, html: string) { // метод отрисовки ответа
+        const commentBlock: HTMLElement | null = document.querySelector(`[data-id="${id}"]`)
+        if(commentBlock) commentBlock.insertAdjacentHTML("afterend" , html)
+    }   
 }

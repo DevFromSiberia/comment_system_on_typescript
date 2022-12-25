@@ -54,11 +54,17 @@ class CommentSystem {
         return currentDate
     }
 
-    protected updateHistory(id: number,commentBlock: object): void {
-        const currentData = this.getDATA() // получение текущей даты
+    protected updateHistoryComments(id: number,commentBlock: object, replyBlock?: object): void {
+        const currentData = this.getDATA() // получение текущих данных
         currentData.history[`commentBlock_${id}`] = commentBlock
         localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление истории
-    }  
+    } 
+    
+    protected updateHistoryReply(id: number | undefined, replyID: number, replyBlock: object) {
+        const currentData = this.getDATA() // получение текущих данных
+        currentData.history[`commentBlock_${id}`].replyes[`reply_${replyID}`] = replyBlock
+        localStorage.setItem('DATA', JSON.stringify(currentData))
+    }
 
     protected updateIdList() {
         const history = this.getDATA().history

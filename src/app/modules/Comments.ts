@@ -40,9 +40,9 @@ class Comments extends CommentSystem { // класс создания комме
                 commentTime: currentDate,
                 commentText: commetsText
             },
-            reply: {}
+            replyes: {}
         }
-        super.updateHistory(this.commentID, newCommentBlock) // обновление истории
+        super.updateHistoryComments(this.commentID, newCommentBlock) // обновление истории
         super.updateIdList() // обновление списка с id комментариев
         
         const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate)
@@ -61,7 +61,7 @@ class Comments extends CommentSystem { // класс создания комме
         
         let htmlTemplateComment: string;
         // let htmlTemplateReply: string;
-        let commentBlock: string | number
+        let commentBlock: string
 
         for(commentBlock in currentData.history) {
             htmlTemplateComment = this.getTemplateComment(
@@ -71,7 +71,9 @@ class Comments extends CommentSystem { // класс создания комме
                 currentData.history[commentBlock].comment.commentText,
                 currentData.history[commentBlock].comment.commentTime,
             )
+            
             this.renderComment(htmlTemplateComment)
+            this.replyes.updateReply(currentData.history[commentBlock])
             this.replyes.addListenerReplyBtn(currentData.history[commentBlock].id)
         }
     }
