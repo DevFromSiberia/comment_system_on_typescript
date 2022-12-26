@@ -4,11 +4,10 @@ class CommentSystem {
     private numberComments: number
     
     protected userForm: UserForm
-    protected rating: Rating
     
     constructor() {
         if(!localStorage.getItem('DATA')) { // инициализация переменной под данные
-            this.DATA = '{"history": {}}'
+            this.DATA = '{"user": {}, "history": {}}'
             localStorage.setItem('DATA', this.DATA)
         } else {
             this.DATA = localStorage.getItem('DATA')
@@ -16,7 +15,6 @@ class CommentSystem {
         this.commentIDList = []
 
         this.userForm = new UserForm()
-        this.rating = new Rating()
 
         this.numberComments = 0
     }
@@ -26,6 +24,13 @@ class CommentSystem {
         const userNickname: HTMLElement | null = document.querySelector('.userBlock__nickname')
         if(userNickname !== null) userNickname.innerHTML = nickname
         if(userAva !== null) userAva.setAttribute('src', ava)
+
+        const data = this.getDATA()
+        data.user = {
+            userNickName: nickname,
+            userAva: ava
+        }
+        localStorage.setItem('DATA', JSON.stringify(data))
 
         const comment = new Comments(this.userForm)
     }

@@ -1,5 +1,5 @@
 const commentSystem = new CommentSystem() // Инициализация системы комментирования
-commentSystem.createUser("Коля", "./assets/img/ava.png")
+commentSystem.createUser("Вася", "./assets/img/ava_2.png")
 
 
 

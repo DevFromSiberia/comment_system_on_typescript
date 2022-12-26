@@ -2,9 +2,12 @@ class Replyes extends CommentSystem {
     private commentID: number | undefined
     private preNickname: string | undefined
     private replyID: number
-    constructor(userForm: UserForm) {
+    private rating: Rating
+
+    constructor(userForm: UserForm, rating: Rating) {
         super()
         this.userForm = userForm
+        this.rating = rating
 
         this.commentID = 0 // для хранения id "комент блока"
         this.preNickname = "" // для хранения ника того кому ответ
@@ -57,9 +60,9 @@ class Replyes extends CommentSystem {
         
 
         const replyHTMLTemplate = this.getTemplateReply(this.replyID, nickName, preNickname, ava, replyTxt, currentDate)
+        
         this.renderReply(commentID, replyHTMLTemplate)
-
-        this.rating.addListenerReplyRatingBtns(commentID, this.replyID)
+        if(commentID !== undefined) this.rating.addListenerReplyRatingBtns(commentID, this.replyID)
     }
     
     private getTemplateReply(replyID:number, userNickname: string | undefined, preNickname: string | undefined, userAva: string | undefined | null, replyTxt:string, date: string) { // для хранения и получения шаблона ответа по необходимости

@@ -1,12 +1,15 @@
 class Comments extends CommentSystem { // класс создания коммент блока
     private commentID: number
     private replyes: Replyes
+    private rating: Rating
 
     constructor(userForm: UserForm) {
         super()
         this.commentID = super.getNumberComments() // получение id комментария исходя из количества комментариев в истории 
-
-        this.replyes = new Replyes(userForm)
+        
+        this.rating = new Rating()
+        this.replyes = new Replyes(userForm, this.rating)
+        
 
         this.updateComments()
 
