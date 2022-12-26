@@ -26,9 +26,13 @@ class CommentSystem {
         if(userAva !== null) userAva.setAttribute('src', ava)
 
         const data = this.getDATA()
+        
         data.user = {
             userNickName: nickname,
-            userAva: ava
+            userAva: ava,
+            favorites: data.user.favorites === undefined || Object.keys(data.user.favorites).length === 0
+            ? {} 
+            : data.user.favorites
         }
         localStorage.setItem('DATA', JSON.stringify(data))
 
