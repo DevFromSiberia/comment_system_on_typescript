@@ -19,26 +19,33 @@ class Favorites extends CommentSystem {
             const replyEl: HTMLElement | null = commentBlockEl.querySelector(`[data-replyid="${replyID}"]`)
             if(replyEl) {
                 const favoritesBtn: HTMLElement | null = replyEl.querySelector('.commentBlock__btnLike')
-                if(favoritesBtn) this.listenerFavoritesBtn(favoritesBtn, commentID, replyID)
+                if(favoritesBtn) {
+                    this.listenerFavoritesBtn(favoritesBtn, commentID, replyID)
+                }
             }
         }
     }
 
     private listenerFavoritesBtn(favoritesBtn: HTMLElement | null, commentID: number, replyID?: number) {
-        
         const favoritesBtnListenerForRemoveFromFavorite = () => {
             if(favoritesBtn) { 
                 favoritesBtn.innerHTML = this.getEmptyHeartIcon()
                 favoritesBtn.dataset.favorite = 'false'  
             }
-
             const currentData = super.getDATA()
             if(replyID === undefined) {
                 for(let favoriteComment in currentData.user.favorites) {
-                    console.log(currentData.user.favorites[favoriteComment].srcID)
+                    if(+currentData.user.favorites[favoriteComment].srcCommentID === commentID) {
+                        delete currentData.user.favorites[favoriteComment]
+                    }  
                 }
             } else {
-                
+                for(let favoriteComment in currentData.user.favorites) {
+                    if(+currentData.user.favorites[favoriteComment].srcCommentID === commentID 
+                    && +currentData.user.favorites[favoriteComment].srcReplyID === replyID) {
+                        delete currentData.user.favorites[favoriteComment]
+                    }
+                }
             }
             localStorage.setItem('DATA', JSON.stringify(currentData))
 
@@ -54,7 +61,7 @@ class Favorites extends CommentSystem {
             const currentData = super.getDATA()
             if(replyID === undefined) {
                 currentData.user.favorites[`favoriteComment_${this.favoriteID}`] = currentData.history[`commentBlock_${commentID}`].comment
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcID = `commentSRC: ${commentID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcCommentID = `${commentID}`
             } else {
                 currentData.user.favorites[`favoriteComment_${this.favoriteID}`] = { 
                     commentAvaPath:  currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].ava,
@@ -62,7 +69,8 @@ class Favorites extends CommentSystem {
                     commentText: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].replyText,
                     commentTime: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].date
                 }
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcID = `commentSRC: ${commentID}, replySRC: ${replyID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcCommentID = `${commentID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcReplyID = `${replyID}`
             }
             localStorage.setItem('DATA', JSON.stringify(currentData))
 
@@ -72,6 +80,10 @@ class Favorites extends CommentSystem {
             if(favoritesBtn !== null) favoritesBtn.addEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
         }
         if(favoritesBtn !== null) favoritesBtn.addEventListener('click', favoritesBtnListenerForAddedToFavorite) 
+    }
+
+    private updateFavoriteBtns(favoritesBtn: HTMLElement | null, commentID: number, replyID?: number) {
+        
     }
 
     private getFullHeartIcon() {
