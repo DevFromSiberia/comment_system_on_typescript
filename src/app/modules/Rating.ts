@@ -3,13 +3,8 @@ class Rating {
     public addListenerCommentsRatingBtns(commentID: number) {
         const commentBlockEl: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`)
         if(commentBlockEl) {
-            const ratingBtnBlock = commentBlockEl.querySelector('.btnBlock__rating')
-
-            const ratingBtnBlockListener = () => {
-                console.log(commentBlockEl.dataset.commentid)
-            }
-
-            if(ratingBtnBlock) ratingBtnBlock.addEventListener('click', ratingBtnBlockListener)
+            const ratingBtnBlock: HTMLElement | null = commentBlockEl.querySelector('.btnBlock__rating')
+            if(ratingBtnBlock) this.listenerBtnBlock(ratingBtnBlock)
         }
     }
 
@@ -18,14 +13,36 @@ class Rating {
         if(commentBlockEl) {
             const replyEl: HTMLElement | null = commentBlockEl.querySelector(`[data-replyid="${replyID}"]`)
             if(replyEl) {
-                const ratingBtnBlock = replyEl.querySelector('.btnBlock__rating')
-
-                const ratingBtnBlockListener = () => {
-                    console.log(commentBlockEl.dataset.commentid, replyEl.dataset.replyid)
-                }
-
-                if(ratingBtnBlock) ratingBtnBlock.addEventListener('click', ratingBtnBlockListener)
+                const ratingBtnBlock: HTMLElement | null = replyEl.querySelector('.btnBlock__rating')
+                if(ratingBtnBlock) this.listenerBtnBlock(ratingBtnBlock)
             }
+        }
+    }
+
+    private listenerBtnBlock(ratingBlock: HTMLElement | null) {
+        if(ratingBlock) {
+            const plusBtn = ratingBlock.querySelector('.plus')
+            const minusBtn = ratingBlock.querySelector('.minus')
+            const counter = ratingBlock.querySelector('.likeCounter')
+            const ratingBtnBlockListener = (event: Event) => {
+                if(counter) {
+                    if(event.target === plusBtn) {
+                    
+                        let curCounter: number = +counter.innerHTML
+                        curCounter++
+                        counter.innerHTML = String(curCounter)
+                    
+                    } else if(event.target === minusBtn) {
+                        
+                            let curCounter: number = +counter.innerHTML
+                            curCounter--
+                            counter.innerHTML = String(curCounter)
+                        
+                    }
+                }
+            }
+
+            if(ratingBlock) ratingBlock.addEventListener('click', ratingBtnBlockListener)
         }
     }
 }
