@@ -87,7 +87,7 @@ class Comments extends CommentSystem { // класс создания комме
             
             this.renderComment(htmlTemplateComment)
             this.replyes.updateReply(currentData.history[commentBlock])
-
+            
             this.replyes.addListenerReplyBtn(currentData.history[commentBlock].commentID)
             this.rating.addListenerCommentsRatingBtns(currentData.history[commentBlock].commentID)
             this.favorites.addListenerCommentsFavoritesBtns(currentData.history[commentBlock].commentID)

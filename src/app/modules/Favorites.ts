@@ -1,10 +1,10 @@
 class Favorites extends CommentSystem {
-    private favoriteID: number
+    private favoriteRandomKey: number
     constructor() {
         super()
-        this.favoriteID = Object.keys(super.getDATA().user.favorites).length
+        this.favoriteRandomKey = Math.floor(Math.random()*10000)
     }
-
+    
     public addListenerCommentsFavoritesBtns(commentID: number) {
         const commentBlockEl: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`)
         if(commentBlockEl) {
@@ -19,38 +19,43 @@ class Favorites extends CommentSystem {
             const replyEl: HTMLElement | null = commentBlockEl.querySelector(`[data-replyid="${replyID}"]`)
             if(replyEl) {
                 const favoritesBtn: HTMLElement | null = replyEl.querySelector('.commentBlock__btnLike')
-                if(favoritesBtn) {
-                    this.listenerFavoritesBtn(favoritesBtn, commentID, replyID)
-                }
+                if(favoritesBtn) this.listenerFavoritesBtn(favoritesBtn, commentID, replyID)
             }
         }
     }
 
-    private listenerFavoritesBtn(favoritesBtn: HTMLElement | null, commentID: number, replyID?: number) {
+    private listenerFavoritesBtn(favoritesBtn: HTMLElement | null, commentID: number, replyID?: number | undefined) {        
+        this.updateFavoriteBtns(favoritesBtn, commentID, replyID)
         const favoritesBtnListenerForRemoveFromFavorite = () => {
             if(favoritesBtn) { 
                 favoritesBtn.innerHTML = this.getEmptyHeartIcon()
                 favoritesBtn.dataset.favorite = 'false'  
             }
             const currentData = super.getDATA()
+            
             if(replyID === undefined) {
                 for(let favoriteComment in currentData.user.favorites) {
-                    if(+currentData.user.favorites[favoriteComment].srcCommentID === commentID) {
-                        delete currentData.user.favorites[favoriteComment]
+                    if(+currentData.user.favorites[favoriteComment].srcCommentID === commentID
+                    && currentData.user.favorites[favoriteComment].srcReplyID === 'undefined') {
+                        delete currentData.user.favorites[favoriteComment]       
                     }  
-                }
+                } 
             } else {
                 for(let favoriteComment in currentData.user.favorites) {
-                    if(+currentData.user.favorites[favoriteComment].srcCommentID === commentID 
-                    && +currentData.user.favorites[favoriteComment].srcReplyID === replyID) {
-                        delete currentData.user.favorites[favoriteComment]
+                    if(currentData.user.favorites[favoriteComment].srcReplyID !== 'undefined'
+                    && +currentData.user.favorites[favoriteComment].srcCommentID === commentID) {
+                        delete currentData.user.favorites[favoriteComment]       
                     }
                 }
             }
+            if(favoritesBtn && favoritesBtn.dataset.favorite === 'true') {
+                favoritesBtn.removeEventListener('click', favoritesBtnListenerForAddedToFavorite)
+                favoritesBtn.addEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+            } else if (favoritesBtn && favoritesBtn.dataset.favorite === 'false') {
+                favoritesBtn.removeEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+                favoritesBtn.addEventListener('click', favoritesBtnListenerForAddedToFavorite)
+            }
             localStorage.setItem('DATA', JSON.stringify(currentData))
-
-            if(favoritesBtn !== null) favoritesBtn.removeEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
-            if(favoritesBtn !== null) favoritesBtn.addEventListener('click', favoritesBtnListenerForAddedToFavorite)
         }
         
         const favoritesBtnListenerForAddedToFavorite = () => {
@@ -60,30 +65,66 @@ class Favorites extends CommentSystem {
             }
             const currentData = super.getDATA()
             if(replyID === undefined) {
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`] = currentData.history[`commentBlock_${commentID}`].comment
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcCommentID = `${commentID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`] = currentData.history[`commentBlock_${commentID}`].comment
+                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcCommentID = `${commentID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcReplyID = `${replyID}`
             } else {
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`] = { 
+                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`] = { 
                     commentAvaPath:  currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].ava,
                     commentNickname: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].nickname,
                     commentText: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].replyText,
                     commentTime: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].date
                 }
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcCommentID = `${commentID}`
-                currentData.user.favorites[`favoriteComment_${this.favoriteID}`].srcReplyID = `${replyID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcCommentID = `${commentID}`
+                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcReplyID = `${replyID}`
             }
             localStorage.setItem('DATA', JSON.stringify(currentData))
-
-            this.favoriteID++
-            
-            if(favoritesBtn !== null) favoritesBtn.removeEventListener('click', favoritesBtnListenerForAddedToFavorite)
-            if(favoritesBtn !== null) favoritesBtn.addEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+            if(favoritesBtn && favoritesBtn.dataset.favorite === 'true') {
+                favoritesBtn.removeEventListener('click', favoritesBtnListenerForAddedToFavorite)
+                favoritesBtn.addEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+            } else if (favoritesBtn && favoritesBtn.dataset.favorite === 'false') {
+                favoritesBtn.removeEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+                favoritesBtn.addEventListener('click', favoritesBtnListenerForAddedToFavorite)
+            }
+            this.favoriteRandomKey++
         }
-        if(favoritesBtn !== null) favoritesBtn.addEventListener('click', favoritesBtnListenerForAddedToFavorite) 
+        
+        if(favoritesBtn && favoritesBtn.dataset.favorite === 'true') {
+            favoritesBtn.removeEventListener('click', favoritesBtnListenerForAddedToFavorite)
+            favoritesBtn.addEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+        } else if (favoritesBtn && favoritesBtn.dataset.favorite === 'false') {
+            favoritesBtn.removeEventListener('click', favoritesBtnListenerForRemoveFromFavorite)
+            favoritesBtn.addEventListener('click', favoritesBtnListenerForAddedToFavorite)
+        }
     }
 
     private updateFavoriteBtns(favoritesBtn: HTMLElement | null, commentID: number, replyID?: number) {
-        
+        const currentData = super.getDATA()
+
+        if(replyID === undefined) {
+            for(let favoriteComment in currentData.user.favorites) {
+                if(+currentData.user.favorites[favoriteComment].srcCommentID === commentID
+                && currentData.user.favorites[favoriteComment].srcReplyID === 'undefined') {
+                    if(favoritesBtn) { 
+                        favoritesBtn.innerHTML = this.getFullHeartIcon()
+                        favoritesBtn.dataset.favorite = 'true'  
+                    }
+                }  
+            }
+        } 
+         
+        else {
+            for(let favoriteComment in currentData.user.favorites) {
+            if(currentData.user.favorites[favoriteComment].srcReplyID !== 'undefined'
+            && +currentData.user.favorites[favoriteComment].srcCommentID === commentID) {
+                if(favoritesBtn) { 
+                    favoritesBtn.innerHTML = this.getFullHeartIcon()
+                    favoritesBtn.dataset.favorite = 'true'  
+                }    
+            }
+        }
+    }
+    
     }
 
     private getFullHeartIcon() {
