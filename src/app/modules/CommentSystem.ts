@@ -37,6 +37,7 @@ class CommentSystem {
         localStorage.setItem('DATA', JSON.stringify(data))
 
         const comment = new Comments(this.userForm)
+        const filter = new Filter()
     }
 
     protected getUserNickname() {

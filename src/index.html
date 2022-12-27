@@ -28,12 +28,15 @@
                 <h1 class="commentSystem__title">Комментарии <span class="commentSystem__count">(80)</span></h1>
                 <div class="commentSystem__filter">
                     <div class="filter__dropdown">
-                        <div class="filter__selected">
-                            <span>По количеству оценок</span>
-                            <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path opacity="0.4" d="M9 15L17.6603 0H0.339746L9 15Z" fill="black"/>
-                            </svg>
+                        <div class="filter__dropdownBtn">
+                            <span class="filter__selected">По количеству оценок</span>
+                            <button class="filter__direction">
+                                <svg width="18" height="15" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path opacity="0.4" d="M9 15L17.6603 0H0.339746L9 15Z" fill="black"/>
+                                </svg>
+                            </button>  
                         </div>
+                        
                         <ul class="filter__list">
                             <li class="filter__item">
                                 <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -90,7 +93,7 @@
 
     <script src="../dist/modules/UserForm.js"></script>
     <script src="../dist/modules/CommentSystem.js"></script>
-    <script src="../dist/modules/FilterDropdown.js"></script>
+    <script src="../dist/modules/Filter.js"></script>
     <script src="../dist/modules/Comments.js"></script>
     <script src="../dist/modules/Replyes.js"></script>
     <script src="../dist/modules/Rating.js"></script>

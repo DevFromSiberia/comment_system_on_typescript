@@ -139,11 +139,35 @@ li {
     min-width: 210px;
     margin-right: 20px;
     position: relative;
-
-    /* overflow: hidden; */
 }
 
-.filter__dropdown:hover .filter__selected{
+.filter__dropdownBtn {
+    display: flex;
+    align-items: center;
+}
+
+.filter__direction {
+    display: block;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+
+    margin-left: 12px;
+    padding-top: 5px;
+
+    cursor: pointer;
+}
+
+.filter__direction svg path {
+    transition: opacity ease-in-out 0.2s;
+}
+
+.filter__direction:hover svg path {
+    opacity: 0.6;
+    transition: opacity ease-in-out 0.2s;
+}
+
+.filter__selected:hover {
     opacity: 1;
     transition: opacity ease-in-out 0.2s;
 }
@@ -170,7 +194,7 @@ li {
     opacity: 1;
 }
 
-.filter__selected svg, .filter__favorites svg {
+.filter__favorites svg {
     margin-left: 5px;
 }
 
