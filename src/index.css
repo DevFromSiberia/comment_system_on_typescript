@@ -568,6 +568,16 @@ li {
     color: #FF0000;
 }
 
+.plus_disable {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #d6ebbc;
+}
+
+.minus_disable {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #f59191;
+}
+
 .likeCounter {
     font-family: 'Inter';
 

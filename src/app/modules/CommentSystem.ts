@@ -41,7 +41,10 @@ class CommentSystem {
             userAva: ava,
             favorites: data.user.favorites === undefined || Object.keys(data.user.favorites).length === 0
             ? {} 
-            : data.user.favorites
+            : data.user.favorites,
+            rated: data.user.rated === undefined || Object.keys(data.user.favorites).length === 0 
+            ? {}
+            : data.user.rated 
         }
         localStorage.setItem('DATA', JSON.stringify(data))
 

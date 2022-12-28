@@ -1,4 +1,9 @@
 class Rating extends CommentSystem {
+    private randomKey: number
+    constructor() {
+        super()
+        this.randomKey = 0
+    }
 
     public addListenerCommentsRatingBtns(commentID: number) {
         const commentBlockEl: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`)
@@ -41,21 +46,32 @@ class Rating extends CommentSystem {
                 }
                 this.changeStyleCounter(counter, curCounter)
 
-                const ratingBtnBlockListener = (event: Event) => {
-                        
-                    if(event.target === plusBtn) {
-                        curCounter++
-                        counter.innerHTML = String(curCounter)
-                        this.updateCounterHistory(curCounter, commentID, replyID)
-                        this.changeStyleCounter(counter, curCounter)
-                    } else if(event.target === minusBtn) {
-                        curCounter--
-                        counter.innerHTML = String(curCounter)
-                        this.updateCounterHistory(curCounter, commentID, replyID)
-                        this.changeStyleCounter(counter, curCounter)
-                    }
+                const plusListener = () => {
+                    curCounter++
+                    counter.innerHTML = String(curCounter)
+                    this.updateCounterHistory(curCounter, commentID, replyID)
+                    this.changeStyleCounter(counter, curCounter)
+
+                    if(plusBtn) plusBtn.classList.add('plus_disable')
+                    if(minusBtn) minusBtn.classList.remove('minus_disable')
+                    if(plusBtn) plusBtn.removeEventListener('click', plusListener)
+                    if(minusBtn) minusBtn.addEventListener('click', minusListener)
                 }
-                if(ratingBlock) ratingBlock.addEventListener('click', ratingBtnBlockListener)
+
+                const minusListener = () => {
+                    curCounter--
+                    counter.innerHTML = String(curCounter)
+                    this.updateCounterHistory(curCounter, commentID, replyID)
+                    this.changeStyleCounter(counter, curCounter)
+                    
+                    if(minusBtn) minusBtn.classList.add('minus_disable')
+                    if(plusBtn) plusBtn.classList.remove('plus_disable')
+                    if(minusBtn) minusBtn.removeEventListener('click', minusListener)
+                    if(plusBtn) plusBtn.addEventListener('click', plusListener)
+                }
+
+                if(plusBtn) plusBtn.addEventListener('click', plusListener)
+                if(minusBtn) minusBtn.addEventListener('click', minusListener)
             }         
         }
     }
@@ -69,7 +85,6 @@ class Rating extends CommentSystem {
             currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].rating = curCounter
             super.updateHistoryReply(commentID, replyID, currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`])
         }
-       
     }
 
     private changeStyleCounter(counterElement: HTMLElement, counterNumber: number) {
