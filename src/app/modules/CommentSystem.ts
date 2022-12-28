@@ -19,6 +19,15 @@ class CommentSystem {
         this.numberComments = 0
     }
 
+    protected userBlockHidden(bool: boolean) {
+        const userBlock: HTMLElement | null = document.querySelector('.commentSystem__userBlock')
+        if(bool) {
+            if(userBlock) userBlock.style.display = 'none'
+        } else {
+            if(userBlock) userBlock.style.display = 'flex'
+        }
+    }
+
     public createUser(nickname: string, ava: string): void { // метод создания пользователя
         const userAva: HTMLElement | null = document.querySelector('.ava')
         const userNickname: HTMLElement | null = document.querySelector('.userBlock__nickname')
@@ -37,7 +46,7 @@ class CommentSystem {
         localStorage.setItem('DATA', JSON.stringify(data))
 
         const comment = new Comments(this.userForm)
-        const filter = new Filter()
+        const filter = new Filter(comment)
     }
 
     protected getUserNickname() {

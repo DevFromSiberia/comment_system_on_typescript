@@ -194,8 +194,13 @@ li {
     opacity: 1;
 }
 
+.filter__favorites_active {
+    opacity: 1;
+}
+
 .filter__favorites svg {
     margin-left: 5px;
+    z-index: -1;
 }
 
 .filter__list {

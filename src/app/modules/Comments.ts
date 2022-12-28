@@ -3,7 +3,7 @@ class Comments extends CommentSystem { // класс создания комме
 
     private replyes: Replyes
     private rating: Rating
-    private favorites: Favorites
+    public favorites: Favorites
 
     constructor(userForm: UserForm) {
         super()
@@ -13,7 +13,6 @@ class Comments extends CommentSystem { // класс создания комме
         this.favorites = new Favorites()
         this.replyes = new Replyes(userForm, this.rating, this.favorites)
         
-
         this.updateComments()
 
         const sendListener = (event: Event): void => {
@@ -69,7 +68,18 @@ class Comments extends CommentSystem { // класс создания комме
         if(comments) comments.insertAdjacentHTML("afterbegin" , html)
     }
 
-    private updateComments() { // метод для обновления списка комментария в соответствии с историей
+    public hiddenComments(bool: boolean) {
+        const comments: NodeListOf<Element> = document.querySelectorAll('.commentSystem__commentBlock')
+            comments.forEach((item: any) => {
+                if(bool) {
+                    item.style.display = "none"
+                } else {
+                    item.style.display = "block"
+                }
+            }) 
+    }
+
+    public updateComments() { // метод для обновления списка комментария в соответствии с историей
         const currentData = super.getDATA()
         
         let htmlTemplateComment: string;
