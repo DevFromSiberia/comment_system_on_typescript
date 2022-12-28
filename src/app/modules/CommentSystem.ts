@@ -7,7 +7,7 @@ class CommentSystem {
     
     constructor() {
         if(!localStorage.getItem('DATA')) { // инициализация переменной под данные
-            this.DATA = '{"user": {}, "history": {}}'
+            this.DATA = '{"user": {}, "history": []}'
             localStorage.setItem('DATA', this.DATA)
         } else {
             this.DATA = localStorage.getItem('DATA')
@@ -85,15 +85,19 @@ class CommentSystem {
         }
     }
 
-    protected updateHistoryComments(commentID: number,commentBlock: object): void {
+    protected updateHistoryComments(commentBlock: object): void {
         const currentData = this.getDATA() // получение текущих данных
-        currentData.history[`commentBlock_${commentID}`] = commentBlock
+        currentData.history.push(commentBlock)
         localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление истории
     } 
     
     protected updateHistoryReply(commentID: number | undefined, replyID: number, replyBlock: object) {
         const currentData = this.getDATA() // получение текущих данных
-        currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`] = replyBlock
+        currentData.history.forEach((commentBlock: any) => {
+            if(+commentBlock.commentID === commentID) {
+                commentBlock.replyes[`reply_${replyID}`] = replyBlock
+            }
+        })
         localStorage.setItem('DATA', JSON.stringify(currentData))
     }
 

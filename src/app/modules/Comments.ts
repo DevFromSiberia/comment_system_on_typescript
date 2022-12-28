@@ -48,7 +48,7 @@ class Comments extends CommentSystem { // класс создания комме
             },
             replyes: {}
         }
-        super.updateHistoryComments(this.commentID, newCommentBlock) // обновление истории
+        super.updateHistoryComments(newCommentBlock) // обновление истории
         super.updateIdList() // обновление списка с id комментариев
         
         
@@ -93,23 +93,25 @@ class Comments extends CommentSystem { // класс создания комме
         let htmlTemplateComment: string;
         // let htmlTemplateReply: string;
         let commentBlock: string
-
-        for(commentBlock in currentData.history) {
-            htmlTemplateComment = this.getTemplateComment(
-                currentData.history[commentBlock].commentID,
-                currentData.history[commentBlock].comment.commentNickname,
-                currentData.history[commentBlock].comment.commentAvaPath,
-                currentData.history[commentBlock].comment.commentText,
-                currentData.history[commentBlock].comment.commentTime.displayDate,
-            )
+        currentData.history.forEach((item:any) => {
             
-            this.renderComment(htmlTemplateComment)
-            this.replyes.updateReply(currentData.history[commentBlock])
+                htmlTemplateComment = this.getTemplateComment(
+                    item.commentID,
+                    item.comment.commentNickname,
+                    item.comment.commentAvaPath,
+                    item.comment.commentText,
+                    item.comment.commentTime.displayDate,
+                )
+                
+                this.renderComment(htmlTemplateComment)
+                this.replyes.updateReply(item)
+                
+                this.replyes.addListenerReplyBtn(item.commentID)
+                this.rating.addListenerCommentsRatingBtns(item.commentID)
+                this.favorites.addListenerCommentsFavoritesBtns(item.commentID)
             
-            this.replyes.addListenerReplyBtn(currentData.history[commentBlock].commentID)
-            this.rating.addListenerCommentsRatingBtns(currentData.history[commentBlock].commentID)
-            this.favorites.addListenerCommentsFavoritesBtns(currentData.history[commentBlock].commentID)
-        }
+        })
+        
         super.updateNumberComments()
     }
 

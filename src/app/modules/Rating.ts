@@ -21,25 +21,35 @@ class Rating extends CommentSystem {
 
     private listenerBtnBlock(ratingBlock: HTMLElement | null, commentID: number, replyID?: number) {
         const currentData = super.getDATA()
-        let curCounter: number
+        
         
         if(ratingBlock) {
             const plusBtn: HTMLElement | null = ratingBlock.querySelector('.plus')
             const minusBtn: HTMLElement | null = ratingBlock.querySelector('.minus')
             const counter: HTMLElement | null = ratingBlock.querySelector('.likeCounter')
+            
             if(counter) {
+                let curCounter: number
                 if(replyID === undefined) {
-                    curCounter = currentData.history[`commentBlock_${commentID}`].rating === undefined 
-                    ? 0 
-                    : currentData.history[`commentBlock_${commentID}`].rating
-                    counter.innerHTML = String(curCounter)
+                    currentData.history.forEach((commentBlock: any) => {
+                        if(+commentBlock.commentID === commentID) {
+                            curCounter = commentBlock.rating === undefined ? 0 : +commentBlock.rating
+                        }
+                        counter.innerHTML = String(curCounter)
+                        this.changeStyleCounter(counter, curCounter)
+                    })
                 } else {
-                    curCounter = currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].rating === undefined 
-                    ? 0 
-                    : currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].rating
-                    counter.innerHTML = String(curCounter)
+                    currentData.history.forEach((commentBlock: any) => {
+                        if(+commentBlock.commentID === commentID) {
+                            curCounter = commentBlock.replyes[`reply_${replyID}`].rating === undefined 
+                            ? 0 
+                            : +commentBlock.replyes[`reply_${replyID}`].rating
+                        }
+                        counter.innerHTML = String(curCounter)
+                        this.changeStyleCounter(counter, curCounter)
+                    })
                 }
-                this.changeStyleCounter(counter, curCounter)
+                
 
                 const plusListener = () => {
                     curCounter++
@@ -73,12 +83,21 @@ class Rating extends CommentSystem {
 
     private updateCounterHistory(curCounter: number, commentID: number, replyID?: number) {
         const currentData = super.getDATA()
-        if(replyID === undefined) {
-            currentData.history[`commentBlock_${commentID}`].rating = curCounter
-            super.updateHistoryComments(commentID, currentData.history[`commentBlock_${commentID}`])
+        if(replyID === undefined) {           
+            currentData.history.forEach((commentBlock: any) => {
+                if(+commentBlock.commentID === commentID) {
+                    commentBlock.rating = curCounter
+                    super.updateHistoryComments(commentBlock)
+                }
+            })
         } else {
             currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].rating = curCounter
-            super.updateHistoryReply(commentID, replyID, currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`])
+            currentData.history.forEach((commentBlock: any) => {
+                if(+commentBlock.commentID === commentID) {
+                    super.updateHistoryReply(commentID, replyID, commentBlock.replyes[`reply_${replyID}`])
+                }
+            })
+            
         }
     }
 

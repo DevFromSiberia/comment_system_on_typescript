@@ -31,7 +31,11 @@ class Replyes extends CommentSystem {
                     if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'reply' // перевод кнопки в режим ответа
                     if(commentBlock.dataset.commentid) this.commentID = +commentBlock.dataset.commentid
                     this.preNickname = commentBlock.querySelector('.commentBlock__nickname')?.innerHTML
-                    this.replyID = Object.keys(super.getDATA().history[`commentBlock_${commentID}`].replyes).length
+                    super.getDATA().history.forEach((commentBlock: any) => {
+                        if(+commentBlock.commentID === commentID) {
+                            this.replyID = Object.keys(commentBlock.replyes).length
+                        }
+                    })
                 } else {
                     this.userForm.changeBtn("Отправить")
                     this.userForm.changeTextarea("Введите текст сообщения...")
