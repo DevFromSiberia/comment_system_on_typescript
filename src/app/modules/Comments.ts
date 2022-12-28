@@ -32,7 +32,7 @@ class Comments extends CommentSystem { // класс создания комме
         if(userForm.sendBtn) userForm.sendBtn.addEventListener("click", sendListener, false);    
     }
 
-    protected createCommentBlock(commentsText: string) {  
+    protected createCommentBlock(commentsText: string) {       
         const nickName = super.getUserNickname()
         const ava = super.getUserAva()
         const currentDate = super.getCurrentDate() // получение текущей даты
@@ -52,7 +52,7 @@ class Comments extends CommentSystem { // класс создания комме
         super.updateIdList() // обновление списка с id комментариев
         
         
-        const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate)
+        const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate.displayDate)
         this.renderComment(commentHTMLTemplate) // отрисовка шаблона
         
         this.replyes.addListenerReplyBtn(this.commentID)
@@ -65,7 +65,9 @@ class Comments extends CommentSystem { // класс создания комме
 
     private renderComment(html: string) { // метод отрисовки комментариев
         const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
-        if(comments) comments.insertAdjacentHTML("afterbegin" , html)
+        if(comments) {
+            comments.insertAdjacentHTML("afterbegin" , html)
+        }
     }
 
     public hiddenComments(bool: boolean) {
@@ -80,6 +82,12 @@ class Comments extends CommentSystem { // класс создания комме
     }
 
     public updateComments() { // метод для обновления списка комментария в соответствии с историей
+        const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
+        if(comments) {
+            const commentBlocks: NodeListOf<Element> | null = comments.querySelectorAll('.commentSystem__commentBlock')
+            commentBlocks.forEach(item => comments.removeChild(item))
+        }
+
         const currentData = super.getDATA()
         
         let htmlTemplateComment: string;
@@ -92,7 +100,7 @@ class Comments extends CommentSystem { // класс создания комме
                 currentData.history[commentBlock].comment.commentNickname,
                 currentData.history[commentBlock].comment.commentAvaPath,
                 currentData.history[commentBlock].comment.commentText,
-                currentData.history[commentBlock].comment.commentTime,
+                currentData.history[commentBlock].comment.commentTime.displayDate,
             )
             
             this.renderComment(htmlTemplateComment)

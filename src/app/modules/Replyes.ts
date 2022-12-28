@@ -62,7 +62,7 @@ class Replyes extends CommentSystem {
         super.updateHistoryReply(commentID, this.replyID, newReply)
         
 
-        const replyHTMLTemplate = this.getTemplateReply(this.replyID, nickName, preNickname, ava, replyTxt, currentDate)
+        const replyHTMLTemplate = this.getTemplateReply(this.replyID, nickName, preNickname, ava, replyTxt, currentDate.displayDate)
         
         this.renderReply(commentID, replyHTMLTemplate)
         if(commentID !== undefined) {
@@ -117,7 +117,7 @@ class Replyes extends CommentSystem {
                 commentBlock.replyes[replyBlock].preNickname,
                 commentBlock.replyes[replyBlock].ava,
                 commentBlock.replyes[replyBlock].replyText,
-                commentBlock.replyes[replyBlock].date,
+                commentBlock.replyes[replyBlock].date.displayDate,
             )
             this.renderReply(commentBlock.commentID, htmlTemplateReply)
 

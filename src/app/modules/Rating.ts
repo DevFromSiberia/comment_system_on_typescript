@@ -1,9 +1,4 @@
 class Rating extends CommentSystem {
-    private randomKey: number
-    constructor() {
-        super()
-        this.randomKey = 0
-    }
 
     public addListenerCommentsRatingBtns(commentID: number) {
         const commentBlockEl: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`)

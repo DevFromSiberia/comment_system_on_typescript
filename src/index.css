@@ -248,6 +248,7 @@ li {
     position: absolute;
     left: -25px;
     display: none;
+    z-index: -1;
 }
 
 .filter__item:hover span {

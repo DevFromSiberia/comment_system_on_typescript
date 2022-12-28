@@ -20,7 +20,8 @@ class Filter extends CommentSystem {
         this.filterFavorites = this.commentSystemFilter !== null ? this.commentSystemFilter.querySelector('.filter__favorites') : null
         
         this.dropdown()
-        this.favoritesCommentFilter()        
+        this.favoritesCommentFilter()
+        this.dateFilter()       
     }
 
     private favoritesCommentFilter() {
@@ -75,5 +76,13 @@ class Filter extends CommentSystem {
     
             if(this.filterList !== null) this.filterList.style.display = 'none'
         })
+    }
+
+    private dateFilter() {
+        const data = super.getDATA()
+        for(let commentBlock in data.history) {
+            const dateObj: Date = new Date(data.history[commentBlock].comment.commentTime.fullDate)
+            const dateNumber = dateObj.getTime()
+        }
     }
 }

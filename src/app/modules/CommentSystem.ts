@@ -41,10 +41,7 @@ class CommentSystem {
             userAva: ava,
             favorites: data.user.favorites === undefined || Object.keys(data.user.favorites).length === 0
             ? {} 
-            : data.user.favorites,
-            rated: data.user.rated === undefined || Object.keys(data.user.favorites).length === 0 
-            ? {}
-            : data.user.rated 
+            : data.user.favorites
         }
         localStorage.setItem('DATA', JSON.stringify(data))
 
@@ -78,10 +75,14 @@ class CommentSystem {
         }
     }
 
-    protected getCurrentDate(): string {
+    protected getCurrentDate(): any {
         const date = new Date()
-        const currentDate = `${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}`
-        return currentDate
+        const fullDate = `${date.getUTCFullYear()}-${date.getMonth()}-${date.getDate()}T${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        const displayDate = `${date.getDate()}.${date.getMonth()}  ${date.getHours()}:${date.getMinutes()}`
+        return {
+            fullDate: fullDate,
+            displayDate: displayDate
+        }
     }
 
     protected updateHistoryComments(commentID: number,commentBlock: object): void {
