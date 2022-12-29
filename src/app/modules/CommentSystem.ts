@@ -46,7 +46,7 @@ class CommentSystem {
         localStorage.setItem('DATA', JSON.stringify(data))
 
         const comment = new Comments(this.userForm)
-        const filter = new Filter(comment)
+        
     }
 
     protected getUserNickname() {
@@ -77,7 +77,8 @@ class CommentSystem {
 
     protected getCurrentDate(): any {
         const date = new Date()
-        const fullDate = `${date.getUTCFullYear()}-${date.getMonth()}-${date.getDate()}T${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    
+        const fullDate = new Date(Date.UTC(date.getUTCFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
         const displayDate = `${date.getDate()}.${date.getMonth()}  ${date.getHours()}:${date.getMinutes()}`
         return {
             fullDate: fullDate,

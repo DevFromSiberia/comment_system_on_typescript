@@ -4,6 +4,7 @@ class Comments extends CommentSystem { // класс создания комме
     private replyes: Replyes
     private rating: Rating
     public favorites: Favorites
+    private filter: Filter
 
     constructor(userForm: UserForm) {
         super()
@@ -12,7 +13,7 @@ class Comments extends CommentSystem { // класс создания комме
         this.rating = new Rating()
         this.favorites = new Favorites()
         this.replyes = new Replyes(userForm, this.rating, this.favorites)
-        
+        this.filter = new Filter(this)
         this.updateComments()
 
         const sendListener = (event: Event): void => {
@@ -46,7 +47,8 @@ class Comments extends CommentSystem { // класс создания комме
                 commentTime: currentDate,
                 commentText: commetsText
             },
-            replyes: {}
+            replyes: {},
+            rating: 0
         }
         super.addHistoryComments(newCommentBlock) // обновление истории
         super.updateIdList() // обновление списка с id комментариев
@@ -58,6 +60,8 @@ class Comments extends CommentSystem { // класс создания комме
         this.replyes.addListenerReplyBtn(this.commentID)
         this.rating.addListenerCommentsRatingBtns(this.commentID)
         this.favorites.addListenerCommentsFavoritesBtns(this.commentID)
+        this.filter.currentFilter()
+        
         this.commentID++
        
         super.updateNumberComments()
@@ -98,7 +102,7 @@ class Comments extends CommentSystem { // класс создания комме
                     item.comment.commentNickname,
                     item.comment.commentAvaPath,
                     item.comment.commentText,
-                    item.comment.commentTime.displayDate,
+                    item.comment.commentTime.displayDate
                 )
                 
                 this.renderComment(htmlTemplateComment)

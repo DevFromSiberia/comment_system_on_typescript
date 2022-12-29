@@ -20,8 +20,23 @@ class Filter extends CommentSystem {
         this.filterFavorites = this.commentSystemFilter !== null ? this.commentSystemFilter.querySelector('.filter__favorites') : null
         
         this.dropdown()
-        this.favoritesCommentFilter()
-        // this.dateFilter() 
+        this.favoritesCommentFilter() 
+    }
+
+    public currentFilter() {
+        if(this.filterSelected) {
+            switch (this.filterSelected.innerHTML) {
+                case 'По дате размещения': 
+                    this.dateFilter()
+                    break
+                case 'По количеству оценок': 
+                    this.ratingFilter()
+                    break
+                case 'По количеству ответов': 
+                    this.replyNumberFilter()
+                    break
+            }    
+        }
     }
 
     private favoritesCommentFilter() {
@@ -69,10 +84,18 @@ class Filter extends CommentSystem {
     private itemListener = (event: any) => {
             if(this.filterSelected !== null) {
                 this.filterSelected.innerHTML = event.target.innerHTML
-                if(event.target.innerHTML === 'По количеству ответов') {
-                    this.replyNumberFilter()
+                
+                switch(event.target.innerHTML) {
+                    case 'По количеству ответов':
+                        this.replyNumberFilter()
+                        break
+                    case 'По количеству оценок':
+                        this.ratingFilter()
+                        break
+                    case 'По дате размещения':
+                        this.dateFilter()
+                        break
                 }
-                console.log(event.target.innerHTML)
             }
             
             if(this.filterItems !== null) this.filterItems.forEach(item => {
@@ -82,19 +105,19 @@ class Filter extends CommentSystem {
             if(this.filterList !== null) this.filterList.style.display = 'none'
     }
 
-    // private dateFilter() {
-    //     const data = super.getDATA()
-    //     const array = data.history
+    private dateFilter() {
+        const data = super.getDATA()
+        const array = data.history
         
-    //     const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
-    //         const dateObj_1: Date = new Date(commentBlock_1.comment.commentTime.fullDate)
-    //         const dateObj_2: Date = new Date(commentBlock_2.comment.commentTime.fullDate)
-    //         const dateNumber_1 = dateObj_1.valueOf()
-    //         const dateNumber_2 = dateObj_2.getTime()
-    //         console.log()
-    //         return dateNumber_1 - dateNumber_2
-    //     })
-    // }
+        const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
+            const a = new Date(commentBlock_1.comment.commentTime.fullDate).getTime()
+            const b = new Date(commentBlock_2.comment.commentTime.fullDate).getTime()
+            return a - b
+        })
+        data.history = newArr
+        localStorage.setItem('DATA', JSON.stringify(data))
+        this.comments.updateComments()
+    }
 
     private replyNumberFilter() {
         const data = super.getDATA()
@@ -102,7 +125,7 @@ class Filter extends CommentSystem {
         const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
             const a = Object.keys(commentBlock_1.replyes).length
             const b = Object.keys(commentBlock_2.replyes).length
-            return b - a
+            return a - b
         })
         data.history = newArr
         localStorage.setItem('DATA', JSON.stringify(data))
@@ -110,6 +133,15 @@ class Filter extends CommentSystem {
     }
 
     private ratingFilter() {
-        
+        const data = super.getDATA()
+        const array = data.history
+        const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
+            const a = commentBlock_1.rating
+            const b = commentBlock_2.rating
+            return a - b
+        })
+        data.history = newArr
+        localStorage.setItem('DATA', JSON.stringify(data))
+        this.comments.updateComments()
     }
 }

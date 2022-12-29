@@ -29,7 +29,7 @@ class Rating extends CommentSystem {
             const counter: HTMLElement | null = ratingBlock.querySelector('.likeCounter')
             
             if(counter) {
-                let curCounter: number
+                let curCounter: number = 0
                 if(replyID === undefined) {
                     currentData.history.forEach((commentBlock: any) => {
                         if(+commentBlock.commentID === commentID) {
@@ -50,29 +50,39 @@ class Rating extends CommentSystem {
                     })
                 }
                 
-
+                let newCounter: number = curCounter
                 const plusListener = () => {
-                    curCounter++
-                    counter.innerHTML = String(curCounter)
-                    this.updateCounterHistory(curCounter, commentID, replyID)
-                    this.changeStyleCounter(counter, curCounter)
+                    if(plusBtn && minusBtn) {    
+                        if(!(plusBtn.classList.contains('plus_disable'))) {
+                            newCounter++
 
-                    if(plusBtn) plusBtn.classList.add('plus_disable')
-                    if(minusBtn) minusBtn.classList.remove('minus_disable')
-                    if(plusBtn) plusBtn.removeEventListener('click', plusListener)
-                    if(minusBtn) minusBtn.addEventListener('click', minusListener)
+                            if(newCounter !== curCounter) {
+                                plusBtn.classList.add('plus_disable')
+                            }
+                            minusBtn.classList.remove('minus_disable')
+
+                            counter.innerHTML = String(newCounter)
+                            this.updateCounterHistory(newCounter, commentID, replyID)
+                            this.changeStyleCounter(counter, newCounter)
+                        } 
+                    }                   
                 }
 
                 const minusListener = () => {
-                    curCounter--
-                    counter.innerHTML = String(curCounter)
-                    this.updateCounterHistory(curCounter, commentID, replyID)
-                    this.changeStyleCounter(counter, curCounter)
+                    if(plusBtn && minusBtn) {
+                        if(!(minusBtn.classList.contains('minus_disable'))) {
+                            newCounter--
+
+                            if(newCounter !== curCounter) {
+                                minusBtn.classList.add('minus_disable')
+                            }
+                            plusBtn.classList.remove('plus_disable')
                     
-                    if(minusBtn) minusBtn.classList.add('minus_disable')
-                    if(plusBtn) plusBtn.classList.remove('plus_disable')
-                    if(minusBtn) minusBtn.removeEventListener('click', minusListener)
-                    if(plusBtn) plusBtn.addEventListener('click', plusListener)
+                            counter.innerHTML = String(newCounter)
+                            this.updateCounterHistory(newCounter, commentID, replyID)
+                            this.changeStyleCounter(counter, newCounter)
+                        }
+                    }                  
                 }
 
                 if(plusBtn) plusBtn.addEventListener('click', plusListener)
@@ -83,15 +93,20 @@ class Rating extends CommentSystem {
 
     private updateCounterHistory(curCounter: number, commentID: number, replyID?: number) {
         const currentData = super.getDATA()
-        let newCommentBlock: any
-        if(replyID === undefined) {           
+        
+        if(replyID === undefined) {
+            let newCommentBlock: any         
             currentData.history.forEach((commentBlock: any) => {
                 if(+commentBlock.commentID === commentID) {
                     commentBlock.rating = curCounter
                     newCommentBlock = commentBlock 
                 }
             })
-            currentData.history[commentID] = newCommentBlock
+            currentData.history.forEach((commentBlock: any, index: number) => {
+                if(+commentBlock.commentID === commentID) {
+                    currentData.history[index] = newCommentBlock
+                }
+            })
             localStorage.setItem('DATA', JSON.stringify(currentData))
         } else {
             currentData.history.forEach((commentBlock: any) => {
