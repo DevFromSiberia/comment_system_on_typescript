@@ -12,7 +12,7 @@ class Favorites extends CommentSystem {
             const ava = currentData.user.favorites[favoriteComment].commentAvaPath
             const nickName = currentData.user.favorites[favoriteComment].commentNickname
             const text = currentData.user.favorites[favoriteComment].commentText
-            const time = currentData.user.favorites[favoriteComment].commentTime
+            const time = currentData.user.favorites[favoriteComment].commentTime.displayDate
 
             const htmlTemplate = this.getTemplateFavoriteComment(nickName, ava, text, time)
             const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
@@ -86,16 +86,25 @@ class Favorites extends CommentSystem {
             }
             const currentData = super.getDATA()
             if(replyID === undefined) {
-                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`] = currentData.history[`commentBlock_${commentID}`].comment
+                currentData.history.forEach((commentBlock: any) => {
+                    if(+commentBlock.commentID === commentID) {
+                        currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`] = commentBlock.comment
+                    }
+                })
                 currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcCommentID = `${commentID}`
                 currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcReplyID = `${replyID}`
             } else {
-                currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`] = { 
-                    commentAvaPath:  currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].ava,
-                    commentNickname: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].nickname,
-                    commentText: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].replyText,
-                    commentTime: currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].date
-                }
+                currentData.history.forEach((commentBlock: any) => {
+                    if(+commentBlock.commentID === commentID) {
+                        currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`] = { 
+                            commentAvaPath:  commentBlock.replyes[`reply_${replyID}`].ava,
+                            commentNickname: commentBlock.replyes[`reply_${replyID}`].nickname,
+                            commentText: commentBlock.replyes[`reply_${replyID}`].replyText,
+                            commentTime: commentBlock.replyes[`reply_${replyID}`].date
+                        }
+                    }
+                })
+                
                 currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcCommentID = `${commentID}`
                 currentData.user.favorites[`favoriteComment_${this.favoriteRandomKey}`].srcReplyID = `${replyID}`
             }
