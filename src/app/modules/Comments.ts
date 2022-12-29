@@ -48,7 +48,7 @@ class Comments extends CommentSystem { // класс создания комме
             },
             replyes: {}
         }
-        super.updateHistoryComments(newCommentBlock) // обновление истории
+        super.addHistoryComments(newCommentBlock) // обновление истории
         super.updateIdList() // обновление списка с id комментариев
         
         

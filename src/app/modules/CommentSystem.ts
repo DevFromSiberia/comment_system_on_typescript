@@ -85,7 +85,7 @@ class CommentSystem {
         }
     }
 
-    protected updateHistoryComments(commentBlock: object): void {
+    protected addHistoryComments(commentBlock: object): void {
         const currentData = this.getDATA() // получение текущих данных
         currentData.history.push(commentBlock)
         localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление истории

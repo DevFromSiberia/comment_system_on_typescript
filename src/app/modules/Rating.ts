@@ -83,21 +83,23 @@ class Rating extends CommentSystem {
 
     private updateCounterHistory(curCounter: number, commentID: number, replyID?: number) {
         const currentData = super.getDATA()
+        let newCommentBlock: any
         if(replyID === undefined) {           
             currentData.history.forEach((commentBlock: any) => {
                 if(+commentBlock.commentID === commentID) {
                     commentBlock.rating = curCounter
-                    super.updateHistoryComments(commentBlock)
+                    newCommentBlock = commentBlock 
                 }
             })
+            currentData.history[commentID] = newCommentBlock
+            localStorage.setItem('DATA', JSON.stringify(currentData))
         } else {
-            currentData.history[`commentBlock_${commentID}`].replyes[`reply_${replyID}`].rating = curCounter
             currentData.history.forEach((commentBlock: any) => {
                 if(+commentBlock.commentID === commentID) {
+                    commentBlock.replyes[`reply_${replyID}`].rating = curCounter
                     super.updateHistoryReply(commentID, replyID, commentBlock.replyes[`reply_${replyID}`])
                 }
             })
-            
         }
     }
 
