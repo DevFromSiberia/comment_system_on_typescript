@@ -1,4 +1,4 @@
-class Favorites extends CommentSystem {
+class Favorites extends CommentSystem { // class for favorite comments
     private favoriteRandomKey: number
     constructor() {
         super()
@@ -169,7 +169,7 @@ class Favorites extends CommentSystem {
     </svg> В избранное`
     }
 
-    private getTemplateFavoriteComment( userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости
+    private getTemplateFavoriteComment( userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { 
         return `
         <div class="commentSystem__commentBlock" data-favorite="favorite">
             <div class="commentBlock__comment">

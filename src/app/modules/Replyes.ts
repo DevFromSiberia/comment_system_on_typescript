@@ -1,4 +1,4 @@
-class Replyes extends CommentSystem {
+class Replyes extends CommentSystem { // class for replyes
     private commentID: number | undefined
     private preNickname: string | undefined
     private replyID: number
@@ -12,13 +12,13 @@ class Replyes extends CommentSystem {
         this.rating = rating
         this.favorites = favorites
 
-        this.commentID = 0 // для хранения id "комент блока"
-        this.preNickname = "" // для хранения ника того кому ответ
+        this.commentID = 0 
+        this.preNickname = "" 
         this.replyID = 0
     }
 
-    // addListenerReplyBtn - создает событие на кнопке "ответить" в каждом "комент блоке". Вызывается при создании комментария или при обновлении списка комментариев
-    public addListenerReplyBtn(commentID: number) { 
+    
+    public addListenerReplyBtn(commentID: number) { // creates an event on the "reply" button in each "comment block". Called when a comment is created or when the list of comments is updated.
         const commentBlock: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`) // получение конкретного "комент блока"
         
         if(commentBlock) {
@@ -26,9 +26,11 @@ class Replyes extends CommentSystem {
             const btnReplyListener = (event: Event) => {
                 if (event.target === replyBtn) {
                     this.commentID = commentID
+
                     this.userForm.changeBtn("Ответить")
                     this.userForm.changeTextarea("Введите ваш ответ пользователю")
-                    if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'reply' // перевод кнопки в режим ответа
+                    this.userForm.focusTextarea()
+                    if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'reply' 
                     if(commentBlock.dataset.commentid) this.commentID = +commentBlock.dataset.commentid
                     this.preNickname = commentBlock.querySelector('.commentBlock__nickname')?.innerHTML
                     super.getDATA().history.forEach((commentBlock: any) => {
@@ -36,26 +38,27 @@ class Replyes extends CommentSystem {
                             this.replyID = Object.keys(commentBlock.replyes).length
                         }
                     })
+                    
                 } else {
                     this.userForm.changeBtn("Отправить")
                     this.userForm.changeTextarea("Введите текст сообщения...")
-                    if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'comment' // перевод кнопки обратно в режим комментария
+                    if(this.userForm.sendBtn) this.userForm.sendBtn.dataset.mode = 'comment'
                 }
             }
             if(commentBlock) commentBlock.addEventListener('click', btnReplyListener)
         }
     }
 
-    public createReplyes(replyText:string) { // метод для создания блока с ответом 
+    public createReplyes(replyText:string) { // method for creating a reply block 
         const commentID = this.commentID
         const nickName = super.getUserNickname()
         const preNickname = this.preNickname
         const ava = super.getUserAva()
-        const currentDate = super.getCurrentDate() // получение текущей даты
+        const currentDate = super.getCurrentDate()
         const replyTxt =  replyText
 
-        const newReply = { // запись блока с комментарием
-            commentID: this.commentID, // id комент блока
+        const newReply = { 
+            commentID: this.commentID,
             replyID: this.replyID,
             nickname: nickName,
             preNickname: preNickname,
@@ -75,7 +78,7 @@ class Replyes extends CommentSystem {
         }
     }
     
-    private getTemplateReply(replyID:number, userNickname: string | undefined, preNickname: string | undefined, userAva: string | undefined | null, replyTxt:string, date: string) { // для хранения и получения шаблона ответа по необходимости
+    private getTemplateReply(replyID:number, userNickname: string | undefined, preNickname: string | undefined, userAva: string | undefined | null, replyTxt:string, date: string) { 
         return `
         <div class="commentBlock__reply" data-replyid=${replyID}>
             <div class="commentBlock__ava">
@@ -130,7 +133,7 @@ class Replyes extends CommentSystem {
         } 
     }
 
-    private renderReply(commentID: number | undefined, html: string) { // метод отрисовки ответа
+    private renderReply(commentID: number | undefined, html: string) { 
         const commentBlock: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`)
         if(commentBlock) commentBlock.insertAdjacentHTML("beforeend" , html)
     }   

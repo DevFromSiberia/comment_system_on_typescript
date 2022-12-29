@@ -1,5 +1,5 @@
-const commentSystem = new CommentSystem() // Инициализация системы комментирования
-commentSystem.createUser("Коля", "./assets/img/ava.png")
+const commentSystem = new CommentSystem() // Initialization of the commenting system
+commentSystem.createUser("defaultName", "./assets/img/ava.png")
 
 
 

@@ -1,4 +1,4 @@
-class Rating extends CommentSystem {
+class Rating extends CommentSystem { // class for rating system
 
     public addListenerCommentsRatingBtns(commentID: number) {
         const commentBlockEl: HTMLElement | null = document.querySelector(`[data-commentid="${commentID}"]`)

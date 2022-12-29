@@ -1,5 +1,5 @@
-class Comments extends CommentSystem { // класс создания коммент блока
-    private commentID: number
+class Comments extends CommentSystem { // class for creating a comment block
+    private commentID: number  // block comment number
 
     private replyes: Replyes
     private rating: Rating
@@ -8,15 +8,16 @@ class Comments extends CommentSystem { // класс создания комме
 
     constructor(userForm: UserForm) {
         super()
-        this.commentID = super.getNumberComments() // получение id комментария исходя из количества комментариев в истории 
-        
+        this.commentID = super.getNumberComments() 
+
         this.rating = new Rating()
         this.favorites = new Favorites()
         this.replyes = new Replyes(userForm, this.rating, this.favorites)
         this.filter = new Filter(this)
+
         this.updateComments()
 
-        const sendListener = (event: Event): void => {
+        const sendListener = (event: Event): void => { // event listener for submit button
             if(userForm.sendBtn && !(userForm.sendBtn.classList.contains('--disable')) && userForm.sendBtn.dataset.mode === "comment") 
                 {
                     const commentText = userForm.getTextTextarea()
@@ -28,6 +29,9 @@ class Comments extends CommentSystem { // класс создания комме
                     const replyText = userForm.getTextTextarea()
                     this.replyes.createReplyes(replyText)
                     userForm.clearTextarea()
+                    userForm.sendBtn.dataset.mode = "comment"
+                    this.userForm.changeBtn("Отправить")
+                    this.userForm.changeTextarea("Введите текст сообщения...")
                 }
         }
         if(userForm.sendBtn) userForm.sendBtn.addEventListener("click", sendListener, false);    
@@ -36,10 +40,10 @@ class Comments extends CommentSystem { // класс создания комме
     protected createCommentBlock(commentsText: string) {       
         const nickName = super.getUserNickname()
         const ava = super.getUserAva()
-        const currentDate = super.getCurrentDate() // получение текущей даты
+        const currentDate = super.getCurrentDate() 
         const commetsText = commentsText
 
-        const newCommentBlock = { // запись блока с комментарием
+        const newCommentBlock = {
             commentID: this.commentID,
             comment: {
                 commentNickname: nickName,
@@ -50,12 +54,10 @@ class Comments extends CommentSystem { // класс создания комме
             replyes: {},
             rating: 0
         }
-        super.addHistoryComments(newCommentBlock) // обновление истории
-        super.updateIdList() // обновление списка с id комментариев
-        
-        
+        super.addHistoryComments(newCommentBlock)        
+             
         const commentHTMLTemplate = this.getTemplateComment(this.commentID, nickName, ava, commetsText, currentDate.displayDate)
-        this.renderComment(commentHTMLTemplate) // отрисовка шаблона
+        this.renderComment(commentHTMLTemplate)
         
         this.replyes.addListenerReplyBtn(this.commentID)
         this.rating.addListenerCommentsRatingBtns(this.commentID)
@@ -67,14 +69,14 @@ class Comments extends CommentSystem { // класс создания комме
         super.updateNumberComments()
     }
 
-    private renderComment(html: string) { // метод отрисовки комментариев
+    private renderComment(html: string) {
         const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
         if(comments) {
             comments.insertAdjacentHTML("afterbegin" , html)
         }
     }
 
-    public hiddenComments(bool: boolean) {
+    public hiddenComments(bool: boolean) { // comment hiding method
         const comments: NodeListOf<Element> = document.querySelectorAll('.commentSystem__commentBlock')
             comments.forEach((item: any) => {
                 if(bool) {
@@ -85,7 +87,7 @@ class Comments extends CommentSystem { // класс создания комме
             }) 
     }
 
-    public updateComments() { // метод для обновления списка комментария в соответствии с историей
+    public updateComments() { // comment update method
         const comments: HTMLElement | null = document.querySelector('.commentSystem__comments')
         if(comments) {
             const commentBlocks: NodeListOf<Element> | null = comments.querySelectorAll('.commentSystem__commentBlock')
@@ -111,13 +113,13 @@ class Comments extends CommentSystem { // класс создания комме
                 this.replyes.addListenerReplyBtn(item.commentID)
                 this.rating.addListenerCommentsRatingBtns(item.commentID)
                 this.favorites.addListenerCommentsFavoritesBtns(item.commentID)
-            
+                
         })
         
         super.updateNumberComments()
     }
 
-    private getTemplateComment(commentID:number, userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { // для хранения и получения шаблона комментария по необходимости
+    private getTemplateComment(commentID:number, userNickname: string | undefined, userAva: string | undefined | null, commentsTxt:string, date: string)       { 
         return `
         <div class="commentSystem__commentBlock" data-commentid=${commentID}>
             <div class="commentBlock__comment">

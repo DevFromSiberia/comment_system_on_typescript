@@ -1,5 +1,5 @@
-class UserForm { // класс текстового поля с кнопкой пользователя
-    private textarea: HTMLInputElement | null
+class UserForm { // text field class with user button
+    public textarea: HTMLInputElement | null
     private charWarning: HTMLElement | null
     public sendBtn: HTMLElement | null
     private paddingBottomPlusTop: number
@@ -9,21 +9,21 @@ class UserForm { // класс текстового поля с кнопкой �
     private checkQuantityChar
 
     constructor() {
-        this.textarea = document.querySelector('.userBlock__textarea') // получение элемента текстового поля
-        this.charWarning = document.querySelector('.userBlock__maxCharWarning') // получение элемента предупрежния о превышении символов
-        this.sendBtn = document.querySelector('.userBlock__btn') // получение элемента кнопки отправить
+        this.textarea = document.querySelector('.userBlock__textarea') 
+        this.charWarning = document.querySelector('.userBlock__maxCharWarning') 
+        this.sendBtn = document.querySelector('.userBlock__btn') 
 
-        this.paddingBottomPlusTop = 40 // сумма верхнего и нижнего внутренних отступов в текстовом поле, нужна для корректного отображения текстового поля при изменении высоты
-        this.maxChar = 1000 // максимальное количество символов в тестовом поле
+        this.paddingBottomPlusTop = 40 
+        this.maxChar = 1000 
 
-        this.autosize = (): void => { // коллбэк функция для динамического изменения высоты текстового поля в зависимости от количество строк текста
+        this.autosize = (): void => { // callback function to dynamically change the height of the text field depending on the number of lines of text
             if(this.textarea !== null) {
                 this.textarea.style.height = '0px';
                 this.textarea.style.height = (this.textarea.scrollHeight - this.paddingBottomPlusTop) + "px";
             }
         }
 
-        this.checkQuantityChar = (): void => { // коллбэк функция для проверки количества введенных символов
+        this.checkQuantityChar = (): void => { // callback function to check the number of entered characters
             const maxCharElement = document.querySelector('.userBlock__maxChar')
             if(this.textarea !== null && this.sendBtn !== null && this.charWarning !== null && maxCharElement !== null) {
                 const strTextarea: string = this.textarea.value
@@ -47,10 +47,11 @@ class UserForm { // класс текстового поля с кнопкой �
                     
             }
         }
+
         this.listenerUserForm()
     }
 
-    private listenerUserForm(): void { // метод для определения прослушивателей событий на текстовом поле
+    private listenerUserForm(): void {
         if(this.textarea && this.sendBtn) {
             this.textarea.setAttribute("style", "height:" + (this.textarea.scrollHeight - this.paddingBottomPlusTop) + "px;overflow-y:hidden;");
             this.textarea.addEventListener("input", this.autosize, false);
@@ -59,18 +60,23 @@ class UserForm { // класс текстового поля с кнопкой �
         }
     }
 
-    public getTextTextarea(): string { // метод для получения текста из текстового поля
+    public getTextTextarea(): string {
         const textareaElement: HTMLInputElement | null = document.querySelector('.userBlock__textarea')
         const text = textareaElement !== null ? textareaElement.value: ""
         return text
     }
 
-    public clearTextarea() { // метод очистки текстового поля текстового поля
+    public clearTextarea() {
         const textareaElement: HTMLInputElement | null = document.querySelector('.userBlock__textarea')
         const maxCharElement: HTMLInputElement | null = document.querySelector('.userBlock__maxChar')
         if(textareaElement) textareaElement.value = ""
         if(maxCharElement) maxCharElement.innerHTML = `Макс. ${this.maxChar} символов`
         if(this.sendBtn) this.sendBtn.classList.add('--disable')
+        if(this.textarea) this.textarea.style.height = '21px'
+    }
+
+    public focusTextarea() {
+        if(this.textarea) this.textarea.focus()
     }
 
     public changeTextarea(textareaText: string) {

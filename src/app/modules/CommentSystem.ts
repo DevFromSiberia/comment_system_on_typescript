@@ -1,25 +1,24 @@
-class CommentSystem {
+class CommentSystem { // class for comment system
     private DATA: string | null
-    private commentIDList: Array<number>
     private numberComments: number
     
     protected userForm: UserForm
     
     constructor() {
-        if(!localStorage.getItem('DATA')) { // инициализация переменной под данные
+
+        if(!localStorage.getItem('DATA')) {  // data initialization
             this.DATA = '{"user": {}, "history": []}'
             localStorage.setItem('DATA', this.DATA)
         } else {
             this.DATA = localStorage.getItem('DATA')
         }
-        this.commentIDList = []
 
         this.userForm = new UserForm()
 
         this.numberComments = 0
     }
 
-    protected userBlockHidden(bool: boolean) {
+    protected userBlockHidden(bool: boolean) { // user block hiding method
         const userBlock: HTMLElement | null = document.querySelector('.commentSystem__userBlock')
         if(bool) {
             if(userBlock) userBlock.style.display = 'none'
@@ -28,7 +27,7 @@ class CommentSystem {
         }
     }
 
-    public createUser(nickname: string, ava: string): void { // метод создания пользователя
+    public createUser(nickname: string, ava: string): void {
         const userAva: HTMLElement | null = document.querySelector('.ava')
         const userNickname: HTMLElement | null = document.querySelector('.userBlock__nickname')
         if(userNickname !== null) userNickname.innerHTML = nickname
@@ -65,7 +64,7 @@ class CommentSystem {
         }
     }
     
-    protected getDATA(): any { //метод для получения данных из истории
+    protected getDATA(): any { // method for getting data from history
         const currentData: string | null = localStorage.getItem('DATA')
         if(currentData) {
             const parseData = JSON.parse(currentData)
@@ -75,7 +74,7 @@ class CommentSystem {
         }
     }
 
-    protected getCurrentDate(): any {
+    protected getCurrentDate(): any { // method to get current date
         const date = new Date()
     
         const fullDate = new Date(Date.UTC(date.getUTCFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
@@ -86,30 +85,20 @@ class CommentSystem {
         }
     }
 
-    protected addHistoryComments(commentBlock: object): void {
-        const currentData = this.getDATA() // получение текущих данных
+    protected addHistoryComments(commentBlock: object): void { // adding comment block to history
+        const currentData = this.getDATA() 
         currentData.history.push(commentBlock)
-        localStorage.setItem('DATA', JSON.stringify(currentData)) // обновление истории
+        localStorage.setItem('DATA', JSON.stringify(currentData)) 
     } 
     
-    protected updateHistoryReply(commentID: number | undefined, replyID: number, replyBlock: object) {
-        const currentData = this.getDATA() // получение текущих данных
+    protected updateHistoryReply(commentID: number | undefined, replyID: number, replyBlock: object) { // reply history update method
+        const currentData = this.getDATA() 
         currentData.history.forEach((commentBlock: any) => {
             if(+commentBlock.commentID === commentID) {
                 commentBlock.replyes[`reply_${replyID}`] = replyBlock
             }
         })
         localStorage.setItem('DATA', JSON.stringify(currentData))
-    }
-
-    protected updateIdList() {
-        const history = this.getDATA().history
-        let commentBlock
-        for(commentBlock in history) {
-            if(!this.commentIDList.includes(history[commentBlock].commentID)) {
-                this.commentIDList.push(history[commentBlock].commentID)
-            }
-        }
     }
 
     protected updateNumberComments() {

@@ -1,4 +1,4 @@
-class Filter extends CommentSystem {
+class Filter extends CommentSystem { // class for filter
     private commentSystemFilter: HTMLElement | null
     private filterDropdown: HTMLElement | null
     private filterFavorites: HTMLElement | null
@@ -19,11 +19,12 @@ class Filter extends CommentSystem {
         this.filterItems = this.filterDropdown !== null ? this.filterDropdown.querySelectorAll('.filter__item') : null
         this.filterFavorites = this.commentSystemFilter !== null ? this.commentSystemFilter.querySelector('.filter__favorites') : null
         
+        this.filterDirectionListener()
         this.dropdown()
         this.favoritesCommentFilter() 
     }
 
-    public currentFilter() {
+    public currentFilter() { // method to apply the current filter
         if(this.filterSelected) {
             switch (this.filterSelected.innerHTML) {
                 case 'По дате размещения': 
@@ -37,6 +38,31 @@ class Filter extends CommentSystem {
                     break
             }    
         }
+    }
+
+    private filterDirectionListener() {
+        const filterDirectionBtn: HTMLElement | null = this.filterDropdown !== null ? this.filterDropdown.querySelector('.filter__direction') : null
+        if(filterDirectionBtn)
+        filterDirectionBtn.addEventListener('click', () => {
+            if(filterDirectionBtn.style.rotate === '0deg') {
+                filterDirectionBtn.style.rotate = '180deg'
+            } else {
+                filterDirectionBtn.style.rotate = '0deg'
+            }
+            this.currentFilter()
+        })
+    }
+
+    private filterDirection(): number | void {
+        const filterDirectionBtn: HTMLElement | null = this.filterDropdown !== null ? this.filterDropdown.querySelector('.filter__direction') : null
+        if(filterDirectionBtn) {       
+            if(filterDirectionBtn.style.rotate === '0deg') {
+                return -1
+            } else {
+                return 1
+            }
+        } 
+        
     }
 
     private favoritesCommentFilter() {
@@ -105,14 +131,17 @@ class Filter extends CommentSystem {
             if(this.filterList !== null) this.filterList.style.display = 'none'
     }
 
+    /*+++++++++++++++++++++++++++ Filters ++++++++++++++++++++*/
+
     private dateFilter() {
         const data = super.getDATA()
         const array = data.history
-        
+        const direction = this.filterDirection()
         const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
             const a = new Date(commentBlock_1.comment.commentTime.fullDate).getTime()
             const b = new Date(commentBlock_2.comment.commentTime.fullDate).getTime()
-            return a - b
+            if(direction > 0) return a - b
+            if(direction < 0) return b - a
         })
         data.history = newArr
         localStorage.setItem('DATA', JSON.stringify(data))
@@ -122,10 +151,12 @@ class Filter extends CommentSystem {
     private replyNumberFilter() {
         const data = super.getDATA()
         const array = data.history
+        const direction = this.filterDirection()
         const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
             const a = Object.keys(commentBlock_1.replyes).length
             const b = Object.keys(commentBlock_2.replyes).length
-            return a - b
+            if(direction > 0) return a - b
+            if(direction < 0) return b - a
         })
         data.history = newArr
         localStorage.setItem('DATA', JSON.stringify(data))
@@ -135,10 +166,12 @@ class Filter extends CommentSystem {
     private ratingFilter() {
         const data = super.getDATA()
         const array = data.history
+        const direction = this.filterDirection()
         const newArr = array.sort((commentBlock_1: any, commentBlock_2: any) => {
             const a = commentBlock_1.rating
             const b = commentBlock_2.rating
-            return a - b
+            if(direction > 0) return a - b
+            if(direction < 0) return b - a
         })
         data.history = newArr
         localStorage.setItem('DATA', JSON.stringify(data))
