@@ -91,8 +91,6 @@ class Comments extends CommentSystem { // класс создания комме
         const currentData = super.getDATA()
         
         let htmlTemplateComment: string;
-        // let htmlTemplateReply: string;
-        let commentBlock: string
         currentData.history.forEach((item:any) => {
             
                 htmlTemplateComment = this.getTemplateComment(
