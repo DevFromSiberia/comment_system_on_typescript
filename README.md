@@ -10,6 +10,7 @@
 ***
 
 Add user in file `src/app/index.ts`
+***
 
 ### Compiling typescript:
 
