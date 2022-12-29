@@ -8,12 +8,15 @@
     cd comment_system_on_typescript
     npm install
 ***
+
+Add user in file `src/app/index.ts`
+
 ### Compiling typescript:
 
     tsc
 ***
 
-\* After compilation run the file `src/index.html` in browser.
-
+\* After compilation: run the file `src/index.html` in browser
+ 
 
 
